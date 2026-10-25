@@ -11,6 +11,7 @@ FORBIDDEN = {
     "evidence file ID literal": re.compile(r"\bevidence_\d+"),
     "sample answer file": re.compile(r"sample_output"),
     "custom expected answers": re.compile(r"custom_cases|expected\.csv"),
+    "intent labels": re.compile(r"intent_labels"),
     "evaluation import": re.compile(r"^\s*(from|import)\s+(evaluation|scoring)\b", re.MULTILINE),
 }
 

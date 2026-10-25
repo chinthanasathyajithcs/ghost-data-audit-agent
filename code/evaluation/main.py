@@ -6,6 +6,7 @@
     python code/evaluation/main.py --predictions p.csv --suite samples   # score an existing file
     python code/evaluation/main.py --validate output.csv  # format check of a full output file
     python code/evaluation/main.py --label "stage 3 identity"            # name the run in run_history.md
+    python code/evaluation/main.py --suite intent                        # Stage 2 classifier on all distinct texts
 
 Metric definitions: scoring.py and code/docs/stages/stage_1_evaluation_harness.md §4.2.
 """
@@ -28,6 +29,7 @@ from deletion_audit.contract import DATASET_DIR, Answer, read_csv, read_csv_head
 from deletion_audit.validate import load_citation_times, validate_file, validate_rows  # noqa: E402
 
 import report  # noqa: E402
+from intent_suite import format_intent_score, run_intent_suite  # noqa: E402
 from scoring import score  # noqa: E402
 
 SUITES = {
@@ -40,12 +42,14 @@ HISTORY_FILE = EVAL_DIR / "run_history.md"
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Score the deletion audit agent against known answers.")
-    parser.add_argument("--suite", choices=("all", *SUITES), default="all")
+    parser.add_argument("--suite", choices=("all", *SUITES, "intent"), default="all",
+                        help="all = samples + custom; intent = Stage 2 classifier on every distinct text")
     parser.add_argument("--cases", default="", help="comma-separated case_ids (no history row is written)")
     parser.add_argument("--predictions", type=Path, help="score this file instead of running the agent")
     parser.add_argument("--diff", action="store_true", help="print the diff of every failing case")
     parser.add_argument("--label", default="", help="short name for this run in run_history.md")
     parser.add_argument("--no-history", action="store_true", help="do not append to run_history.md")
+    parser.add_argument("--refresh-intent", action="store_true", help="intent suite: ignore cached answers")
     parser.add_argument("--validate", type=Path, help="only run the format check on this output file")
     parser.add_argument("--requests", type=Path, default=DATASET_DIR / "deletion_requests.csv",
                         help="requests file used by --validate")
@@ -103,17 +107,21 @@ def git_commit() -> str:
     return head.stdout.strip() + ("+dirty" if dirty.stdout.strip() else "")
 
 
-def record_run(results: dict, label: str) -> Path:
-    now = datetime.now(timezone.utc)
-    stamp, commit = now.strftime("%Y-%m-%d %H:%M"), git_commit()
+def append_history(rows: list[str]) -> None:
     if not HISTORY_FILE.exists():
         HISTORY_FILE.write_text("# Evaluation run history\n\nOne row per full-suite run of "
                                 "`code/evaluation/main.py`. Metric definitions: "
                                 "`code/docs/stages/stage_1_evaluation_harness.md` §4.2.\n\n"
                                 + report.HISTORY_HEADER, encoding="utf-8")
     with open(HISTORY_FILE, "a", encoding="utf-8") as handle:
-        for suite, (result, problems) in results.items():
-            handle.write(report.history_row(stamp, commit, label, suite, result, len(problems)))
+        handle.writelines(rows)
+
+
+def record_run(results: dict, label: str) -> Path:
+    now = datetime.now(timezone.utc)
+    stamp, commit = now.strftime("%Y-%m-%d %H:%M"), git_commit()
+    append_history([report.history_row(stamp, commit, label, suite, result, len(problems))
+                    for suite, (result, problems) in results.items()])
 
     RUNS_DIR.mkdir(exist_ok=True)
     run_file = RUNS_DIR / f"{now.strftime('%Y%m%dT%H%M%SZ')}.json"
@@ -121,6 +129,20 @@ def record_run(results: dict, label: str) -> Path:
                "suites": {s: report.metrics_dict(r, p) for s, (r, p) in results.items()}}
     run_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     return run_file
+
+
+def run_intent(args: argparse.Namespace) -> int:
+    try:
+        result, usage, cache_hits = run_intent_suite(refresh=args.refresh_intent)
+    except RuntimeError as error:
+        raise SystemExit(f"intent suite failed: {error}")
+    print(format_intent_score(result))
+    print(usage.format_summary(cache_hits))
+    if not args.no_history:
+        stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+        append_history([report.intent_history_row(stamp, git_commit(), args.label, result)])
+        print(f"\nRecorded in {HISTORY_FILE.relative_to(CODE_DIR.parent)}")
+    return 0 if result.correct == result.texts else 1
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -131,6 +153,9 @@ def main(argv: list[str] | None = None) -> int:
         for problem in problems:
             print(f"  - {problem}")
         return 1 if problems else 0
+
+    if args.suite == "intent":
+        return run_intent(args)
 
     wanted = {c.strip() for c in args.cases.split(",") if c.strip()}
     suites = list(SUITES) if args.suite == "all" else [args.suite]

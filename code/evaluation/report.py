@@ -104,6 +104,13 @@ def history_row(time: str, commit: str, label: str, suite: str, result: Score, p
     return "| " + " | ".join(cells) + " |\n"
 
 
+def intent_history_row(time: str, commit: str, label: str, result) -> str:
+    """Intent suite row: Status = authorises-deletion accuracy over distinct texts; step metrics do not apply."""
+    cells = (time, commit, label.replace("|", "/"), "intent", str(result.texts),
+             pct(result.accuracy).strip(), "—", "—", "—", "—", "—", "—")
+    return "| " + " | ".join(cells) + " |\n"
+
+
 def metrics_dict(result: Score, problems: list[str]) -> dict:
     return {
         "cases": result.cases,

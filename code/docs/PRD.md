@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Challenge | HackerRank Orchestrate, October 2026 — *Ghost Data Still Exists* |
-| Document status | Draft v0.8 — living document, updated at every major step |
+| Document status | Draft v0.10 — living document, updated at every major step |
 | Last updated | 2026-10-25 |
 | Sources of truth | `problem_statement.md`, `AGENTS.md` §6, `dataset/deletion_rules.csv`, `README.md` |
 
@@ -195,7 +195,8 @@ telemetry, marketing profiles, email delivery logs.
 - FR-2.1 Classify whether `request_text` authorizes deletion, in any language.
 - FR-2.2 Access, correction, export, marketing opt-out and other non-deletion intents → `NOT_APPLICABLE`, `[]`.
 - **Carry-in notes:** the 518 eval requests use only 375 distinct texts; 62 are non-English (Portuguese, Spanish, French, Japanese, Korean); only about 5 look like non-deletion requests (invoice copy, phone update, export, login reset, email change). Cache by text, not by case, and batch calls.
-- **Status:** Not started. Approach decided: LLM, cached (D7).
+- **Stage doc:** [`stages/stage_2_request_understanding.md`](stages/stage_2_request_understanding.md)
+- **Status:** **Done** (2026-10-25) — LLM classifier (Haiku via `claude -p`, JSON schema, batches of 25), shipped cache, usage tracking, intent suite. Intent 402/402 after two general prompt fixes; 10 eval cases → `NOT_APPLICABLE`; reruns byte-identical with 0 calls, also offline.
 
 ### Stage 3 — Identity resolution
 - FR-3.1 Map the request email (current **or historical**) to a `user_id`.
@@ -307,7 +308,8 @@ extractors, never by the agent.
 - FR-8.1 Iterate on failures until sample scores plateau; record each failure and fix.
 - FR-8.2 Full 518-case run with token/cost tracking.
 - FR-8.3 Write `code/evaluation/evaluation_report.md` and `code/evaluation/usage_report.md`.
-- FR-8.4 Write `code/README.md` (setup + run), package `code.zip`, final checklist.
+- FR-8.4 Replace the **root** `README.md` with our setup + run instructions (the official zip command packs the root `README.md` and `code/`, not `code/README.md`), package `code.zip`, final checklist.
+- FR-8.5 Submission is an upload of `code.zip`, `output.csv` and `log.txt` (chat_transcript) on the challenge page; the git remote is the organizers' repo, so commits stay local and are never pushed.
 - **Status:** Not started.
 
 ## 8. Non-Functional Requirements
@@ -353,8 +355,8 @@ evaluation/main.py ──► runs agent on samples ──► metrics + diffs
 | Q3 | Request intent | LLM / keyword rules / rules with LLM fallback | **Decided: LLM, cached** (D7) |
 | Q4 | Images & PDFs | Docling (local OCR + layout) / Claude vision / plain PDF text library | **Proposed: Docling for PDFs + screenshots; Claude vision as fallback — confirm with a bake-off on 2–3 screenshots** (D8, revised) |
 | Q5 | Fully agentic vs hybrid pipeline | Hybrid / fully agentic | **Decided: Hybrid** (D5) |
-| Q6 | Model tier per task | Haiku for intent, Sonnet for image extraction, … | Open — decide in Stage 2 / Stage 4 |
-| Q7 | How can a grader without a Claude Code login re-run the agent? | Ship the LLM cache in `code.zip` / offline fallback backend / both | Open — decide in Stage 2 |
+| Q6 | Model tier per task | Haiku for intent, Sonnet for image extraction, … | **Intent: Haiku** (`claude-haiku-5-5`, 402/402, D12); image extraction open — Stage 4A |
+| Q7 | How can a grader without a Claude Code login re-run the agent? | Ship the LLM cache in `code.zip` / offline fallback backend / both | **Decided: ship the cache** (keyed by prompt version + model + text); verified offline run (D12) |
 | Q8 | Which `evidence_id` to cite when several items prove a step | Determined from sample patterns in Stage 0 | **Answered (Stage 0, C-SP-4):** per step, the file captured ≤ `audit_at` that shows that resource's state; activity rows are not cited |
 | Q9 | How to link cleaned records that carry no identifier (OQ-1: 16 of 111 sample resources) | Deletion-worker window + result matching `reported_status` (29/32) / exclusion of other people's resources / accept misses | Open — Stage 3–4 |
 | Q10 | How to treat `LINK_RESOURCE_IDENTITY` activity (data-catalog claims linking a resource to a person) when evidence disagrees, e.g. `marketing_001` (F1-1) | Trust evidence identifiers only / accept the link when evidence does not contradict it | Open — Stage 3–4 |
@@ -373,6 +375,7 @@ evaluation/main.py ──► runs agent on samples ──► metrics + diffs
 | D8 | 2026-10-24 | ~~PDFs via text library; screenshots via Claude vision~~ → **Revised (user suggestion): Docling for PDFs and screenshots, Claude vision only if Docling misreads; decided by the Stage 4A bake-off.** Extract once and cache | Inspection: PDFs have a real text layer; screenshots are clean admin-console UIs whose facts are all text (tables + detail panel, no colour-only states). Docling is local, free and deterministic; risk is losing row/column links in UI tables. Stage 0: some facts exist **only** in PDFs/PNGs (`support_001`, `marketing_001`), so extraction is required, not optional | Pending bake-off |
 | D9 | 2026-10-24 | PRD stays big picture; each stage starts with a deep-dive design doc in `code/docs/stages/` (template in §7), written before coding and closed with results | Detail is decided when we know most; keeps the PRD readable | Agreed |
 | D11 | 2026-10-25 | Evaluation harness as designed in Stage 1 (P1–P5): own metric formulas, agent run via CLI, 8 custom cases, validator shared with the agent (placed in the agent package), committed `run_history.md` | Measurable, reproducible progress; visible to the code judge | Agreed |
+| D12 | 2026-10-25 | Stage 2 as designed (P1–P6): LLM-only intent, Haiku, batches of 25 with id checks, committed cache answering Q7, per-call usage log, hand-labelled intent suite | 402/402 intent accuracy; byte-identical offline reruns; $0.025 per cold run | Agreed |
 | D10 | 2026-10-24 | Step order is one strict sort (phase, operation order, `system_id`, `resource_id`); FR-7.3's separate dependency ordering dropped | Verified: all 32 sample outputs follow this sort exactly | Agreed |
 
 ### 11.1 LLM backend notes (D6)
@@ -429,4 +432,6 @@ claude -p "<prompt>" --model haiku --output-format json --max-turns 1 \
 | 0.6 | 2026-10-25 | Stage 0 done: §7.0 Data conventions added; Q8 answered; Q9 (unlinked cleaned records) added |
 | 0.7 | 2026-10-25 | Stage 1 kickoff doc written; Stage 1 status → Kickoff |
 | 0.8 | 2026-10-25 | Stage 1 done (D11); Q10 added (identity-link claims) |
+| 0.9 | 2026-10-25 | Stage 2 kickoff doc written |
+| 0.10 | 2026-10-25 | Stage 2 done (D12); Q6 answered for intent; Q7 decided |
 | 0.5 | 2026-10-24 | PRD analysis folded in: stage kickoff template (D9); carry-in notes for Stages 0, 1, 2, 6, 7; FR-7.3 replaced by strict sort (D10); step-chain table; NFR-2 corrected (no CLI temperature); Q7 reproducibility, Q8 citation rule; 4A timebox; change log reordered |
