@@ -1,0 +1,9 @@
+case_id,email,requested_at,reported_status,reported_at,audit_at,request_text
+custom_01,amina.elmasri@gmail.com,2026-08-18T09:14:00Z,COMPLETE,2026-08-20T16:42:00Z,2026-09-03T11:30:00Z,Could you send me a copy of all the personal data you hold about me? I am not closing my account; I only want to see what is stored.
+custom_02,novak.tomasz@icloud.com,2026-09-09T12:00:00Z,COMPLETE,2026-09-12T12:00:00Z,2026-10-01T12:00:00Z,プロモーションメールの配信を停止してください。アカウントはこのまま使い続けます。
+custom_03,almeida.mariana@gmail.com,2026-08-30T12:00:00Z,NOT_STARTED,2026-09-02T12:00:00Z,2026-09-15T12:00:00Z,Gostaria de corrigir o endereço de e-mail cadastrado na minha conta. Quero continuar usando o serviço normalmente.
+custom_04,minjun.kim90@gmail.com,2026-08-24T12:00:00Z,COMPLETE,2026-08-25T12:00:00Z,2026-09-15T12:00:00Z,"I changed the email on this account before deleting it. Please check that nothing tied to the old address was left behind, even in systems that do not display the email."
+custom_05,k.appiah88@gmail.com,2026-09-05T09:00:00Z,NOT_STARTED,2026-09-07T09:00:00Z,2026-09-16T09:00:00Z,이 이메일 주소와 연결된 계정과 개인 정보를 모두 삭제해 주세요. 처리가 끝나면 결과를 알려 주세요.
+custom_06,y.park50@yahoo.com,2026-05-15T11:00:00Z,COMPLETE,2026-05-17T11:00:00Z,2026-06-13T11:00:00Z,이 이메일 주소에 연결된 계정의 영구 삭제를 요청합니다. 개인정보 처리 절차에 따라 현재 및 이전 식별자를 검토해 주세요. 검토가 완료되면 결과를 확인해 주세요.
+custom_07,ieriksen5151@fastmail.com,2026-08-27T12:00:00Z,NOT_STARTED,2026-08-29T12:00:00Z,2026-09-24T12:00:00Z,I need a copy of last year's invoices for my records. Please leave my profile and purchase history in place.
+custom_08,A.EZE08@GMAIL.COM,2026-09-04T12:00:00Z,COMPLETE,2026-09-06T12:00:00Z,2026-09-15T12:00:00Z,"I no longer need this account. Please remove my name and contact details, but keeping an internal deleted-account reference is fine if other required records still depend on it."
