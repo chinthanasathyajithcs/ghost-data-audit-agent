@@ -155,7 +155,7 @@ def select_requests(requests: list[dict], cases: str) -> list[dict]:
 def write_usage_summary(usage: UsageRecorder, requests: int, cache_hits: int) -> None:
     LAST_RUN_USAGE_FILE.parent.mkdir(parents=True, exist_ok=True)
     payload = {"time": datetime.now(timezone.utc).isoformat(timespec="seconds"), "requests": requests,
-               "intent_cache_hits": cache_hits, "models": usage.summary()}
+               "cache_hits": cache_hits, "models": usage.summary(), "tasks": usage.summary(by="task")}
     LAST_RUN_USAGE_FILE.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
@@ -188,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
           f"{len(store.skipped)} file(s) skipped", file=sys.stderr)
     print(identity_stats.describe(), file=sys.stderr)
     print(usage.format_summary(classifier.cache_hits + extractor.cache_hits + categorizer.cache_hits), file=sys.stderr)
-    write_usage_summary(usage, len(requests), classifier.cache_hits)
+    write_usage_summary(usage, len(requests), classifier.cache_hits + extractor.cache_hits + categorizer.cache_hits)
     if args.explain:
         audit_times = {r["case_id"]: parse_time(r["audit_at"]) for r in requests}
         for case_id, case_file in case_files.items():

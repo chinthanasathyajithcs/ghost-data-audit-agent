@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Challenge | HackerRank Orchestrate, October 2026 — *Ghost Data Still Exists* |
-| Document status | Draft v0.12 — living document, updated at every major step |
+| Document status | v1.0 — final for submission |
 | Last updated | 2026-10-25 |
 | Sources of truth | `problem_statement.md`, `AGENTS.md` §6, `dataset/deletion_rules.csv`, `README.md` |
 
@@ -212,7 +212,7 @@ telemetry, marketing profiles, email delivery logs.
 - FR-4.3 Extract facts from images/PDFs once and cache them.
 - FR-4.4 Respect time (C-TM-1/2): a file may be **cited** only if its manifest `captured_at` ≤ `audit_at`; a fact may be **used** (for linking and state) only if its own timestamp ≤ `audit_at`.
 - **Stage doc:** [`stages/stage_4_evidence_ingestion.md`](stages/stage_4_evidence_ingestion.md)
-- **Status:** **Kickoff** (2026-10-25) — design written: `Observation` + `Coverage` model, five generic readers, learned system-ID map, identifier linking with propagation and rejection of other people's records, Q9 activity rule, Q10 catalog rule, 4A bake-off (Claude vision feasibility passed; no PDF/OCR libraries installed); proposals P1–P7 awaiting agreement.
+- **Status:** **Done** (2026-10-25) — 94/94 files read into one observation model; case files for all 508 deletion requests; samples: link recall 93/111 (100% of resources the evidence ties to the subject), precision 93/93, citations 74/75. Q9/Q10 decided (D13); D8 decided by the 4A bake-off. Details: stage doc §7.
 
 #### 4A — Extraction bake-off: Docling vs Claude vision (run at the start of Stage 4)
 
@@ -267,9 +267,9 @@ extractors, never by the agent.
 
 | Extractor | Field recall | Row association | Exactness | Deterministic | Time / tokens per file | Verdict |
 |---|---|---|---|---|---|---|
-| E1 Docling | – | – | – | – | – | pending |
-| E3 Claude vision | – | – | – | – | – | pending |
-| E0 pypdf (PDFs) | – | – | – | – | – | pending |
+| E1 Docling | – | – | – | – | – | **not viable**: install did not finish in the 30-minute timebox |
+| E3 Claude vision (Haiku) | 70/70 | 100% | 100% | cached (runs vary; see stage doc §7.2.1) | ≈ $0.002 / file | **Chosen** (Sonnet also 70/70 at ~10× cost) |
+| E0 pypdf (PDFs) | 16/16 (text only) | — | 100% | yes | free | Baseline; not needed |
 
 ### Stage 5 — State reconstruction at `audit_at`
 - FR-5.1 For each subject resource, determine its true state at `audit_at` from evidence; treat `reported_result` and workflow statuses as claims.
@@ -315,7 +315,8 @@ extractors, never by the agent.
 - FR-8.3 Write `code/evaluation/evaluation_report.md` and `code/evaluation/usage_report.md`.
 - FR-8.4 Replace the **root** `README.md` with our setup + run instructions (the official zip command packs the root `README.md` and `code/`, not `code/README.md`), package `code.zip`, final checklist.
 - FR-8.5 Submission is an upload of `code.zip`, `output.csv` and `log.txt` (chat_transcript) on the challenge page; the git remote is the organizers' repo, so commits stay local and are never pushed.
-- **Status:** Not started.
+- **Stage doc:** [`stages/stage_8_final_run_and_packaging.md`](stages/stage_8_final_run_and_packaging.md)
+- **Status:** **Done** (2026-10-25) — final cold run (75 Haiku calls, $0.1027), usage and evaluation reports, root README replaced, `code.zip` built with `code/package.py` and verified to reproduce `output.csv` offline.
 
 ## 8. Non-Functional Requirements
 
@@ -377,10 +378,11 @@ evaluation/main.py ──► runs agent on samples ──► metrics + diffs
 | D5 | 2026-10-24 | Hybrid pipeline (code investigates, AI interprets) | Accuracy, determinism, cost, explainability | Agreed |
 | D6 | 2026-10-24 | LLM backend: Claude Code CLI in headless mode (`claude -p`), authenticated by the user's Claude Pro plan; no API key. Pluggable backend interface so an `ANTHROPIC_API_KEY` backend can be added later | No API key available; tested working. Minimal flags cut per-call overhead from ~43k to ~0.6k tokens | Agreed |
 | D7 | 2026-10-24 | Request intent via LLM, results cached per request | Multilingual natural language | Agreed |
-| D8 | 2026-10-24 | ~~PDFs via text library; screenshots via Claude vision~~ → **Revised (user suggestion): Docling for PDFs and screenshots, Claude vision only if Docling misreads; decided by the Stage 4A bake-off.** Extract once and cache | Inspection: PDFs have a real text layer; screenshots are clean admin-console UIs whose facts are all text (tables + detail panel, no colour-only states). Docling is local, free and deterministic; risk is losing row/column links in UI tables. Stage 0: some facts exist **only** in PDFs/PNGs (`support_001`, `marketing_001`), so extraction is required, not optional | Pending bake-off |
+| D8 | 2026-10-25 | **Decided by the Stage 4A bake-off: Claude vision with Haiku (`claude-haiku-5-5`) for every screenshot and PDF.** 70/70 facts, 0 row mix-ups, 0 invented IDs (Sonnet also 70/70 at ~10× the cost; pypdf text 16/16 on PDFs). Docling was not viable here: its install did not finish within the 30-minute timebox. Extraction prompt tightened after the Stage 8 cold run showed run-to-run variance (header fields, references) | Perfect on the truth set, cheapest, one code path; extraction cached and shipped | Agreed (bake-off) |
 | D9 | 2026-10-24 | PRD stays big picture; each stage starts with a deep-dive design doc in `code/docs/stages/` (template in §7), written before coding and closed with results | Detail is decided when we know most; keeps the PRD readable | Agreed |
 | D11 | 2026-10-25 | Evaluation harness as designed in Stage 1 (P1–P5): own metric formulas, agent run via CLI, 8 custom cases, validator shared with the agent (placed in the agent package), committed `run_history.md` | Measurable, reproducible progress; visible to the code judge | Agreed |
 | D12 | 2026-10-25 | Stage 2 as designed (P1–P6): LLM-only intent, Haiku, batches of 25 with id checks, committed cache answering Q7, per-call usage log, hand-labelled intent suite | 402/402 intent accuracy; byte-identical offline reruns; $0.025 per cold run | Agreed |
+| D13 | 2026-10-25 | Stage 4 linking: identifier links with propagation; scope rule (a resource must be seen at or after `requested_at`); Q9 activity links only one missing primary account; Q10 catalog claims accepted unless contradicted by evidence, display aliases honoured; evidence captured after `audit_at` never used to break ties | 100% link precision on samples and custom cases | Agreed |
 | D10 | 2026-10-24 | Step order is one strict sort (phase, operation order, `system_id`, `resource_id`); FR-7.3's separate dependency ordering dropped | Verified: all 32 sample outputs follow this sort exactly | Agreed |
 
 ### 11.1 LLM backend notes (D6)
@@ -434,6 +436,7 @@ claude -p "<prompt>" --model haiku --output-format json --max-turns 1 \
 | 0.2 | 2026-10-24 | Resolved Q1–Q5 (Python, hybrid, Claude Code CLI backend, LLM intent, PDF text + vision); D1 agreed; added D4–D8 and LLM backend notes |
 | 0.3 | 2026-10-24 | D8 revised: Docling proposed for PDFs/screenshots pending bake-off vs Claude vision |
 | 0.4 | 2026-10-24 | Added Stage 4A extraction bake-off plan (Docling vs Claude vision): candidates, test set, ground truth, metrics, decision rule, results table |
+| 0.5 | 2026-10-24 | PRD analysis folded in: stage kickoff template (D9); carry-in notes for Stages 0, 1, 2, 6, 7; FR-7.3 replaced by strict sort (D10); step-chain table; NFR-2 corrected (no CLI temperature); Q7 reproducibility, Q8 citation rule; 4A timebox; change log reordered |
 | 0.6 | 2026-10-25 | Stage 0 done: §7.0 Data conventions added; Q8 answered; Q9 (unlinked cleaned records) added |
 | 0.7 | 2026-10-25 | Stage 1 kickoff doc written; Stage 1 status → Kickoff |
 | 0.8 | 2026-10-25 | Stage 1 done (D11); Q10 added (identity-link claims) |
@@ -441,4 +444,9 @@ claude -p "<prompt>" --model haiku --output-format json --max-turns 1 \
 | 0.10 | 2026-10-25 | Stage 2 done (D12); Q6 answered for intent; Q7 decided |
 | 0.11 | 2026-10-25 | Stage 3 done; Q9 assigned to Stage 4 |
 | 0.12 | 2026-10-25 | Stage 4 kickoff doc written; FR-4.4 refined (cite vs use) |
-| 0.5 | 2026-10-24 | PRD analysis folded in: stage kickoff template (D9); carry-in notes for Stages 0, 1, 2, 6, 7; FR-7.3 replaced by strict sort (D10); step-chain table; NFR-2 corrected (no CLI temperature); Q7 reproducibility, Q8 citation rule; 4A timebox; change log reordered |
+| 0.13 | 2026-10-25 | Stage 4 done: D8 (Haiku vision), D13 (linking rules), Q9/Q10 decided, 4A results |
+| 0.14 | 2026-10-25 | Stage 5 done (state at audit_at) |
+| 0.15 | 2026-10-25 | Stage 6 done (policy engine); Q6 decided (Haiku for all LLM tasks) |
+| 0.16 | 2026-10-25 | Stage 7 done (steps, status, output.csv) |
+| 0.17 | 2026-10-25 | Stage 8 started; repaired Stage 4 entries lost when a command was interrupted (status, D8, D13, version) |
+| 1.0 | 2026-10-25 | Stage 8 done: final cold run, reports, README, code.zip |

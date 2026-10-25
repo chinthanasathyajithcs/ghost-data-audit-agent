@@ -15,6 +15,12 @@ underscores, followed by an underscore and digits, for example `account_5762`, `
 - A detail panel for a resource adds its label/value pairs to that same record.
 - A document about one resource (for example "reference CS-4827 / support_001") is one record with
   every label/value pair in the document, across all pages.
+- The person a screen or document is about is part of its main record: the name, email, phone and
+  identifiers shown in its title, subtitle or header are **always** fields of that record (for
+  example `Name`, `Email`, `Phone`), even when the same values appear nowhere else on the page.
+- A resource identifier mentioned only as a reference inside another record's field (for example
+  `Support: CS-8538 · support_9538` in an account panel) stays a field value of that record; it is not
+  a separate record.
 - Rows or items without a resource identifier are left out.
 
 ## Rules

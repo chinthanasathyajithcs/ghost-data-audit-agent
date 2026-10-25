@@ -288,11 +288,22 @@ be found; a link that only appears after `audit_at` is deliberately not used.
 | **E3 Claude vision, Haiku** | 5 | **63/63** | **0** | **0** | **≈ $0.01 (5 calls)** |
 | E0 pypdf text | 2 PDFs | 16/16 (text only, no records) | — | — | free |
 | E0+L pypdf → Claude Haiku | 2 PDFs | 16/16 | 0 | 0 | ≈ $0.002 |
-| E1 Docling, E1+L Docling → Haiku, E3+E1 cross-check | — | see §7.2.1 | | | |
+| E1 Docling, E1+L Docling → Haiku, E3+E1 cross-check | — | **not viable here**: the install (PyTorch/CUDA stack) did not finish within the 30-minute timebox, so no Docling candidate or combination could be scored | | | |
 
 **Decision (D8):** Claude vision with Haiku for every screenshot and PDF: perfect on the truth set,
 row associations intact, cheapest model, one code path for both file types. Full extraction of all
 15 documents: 15 calls, $0.0205, cached and shipped.
+
+#### 7.2.1 Extraction variance found in the Stage 8 cold run
+
+The first cold run (empty caches) showed that fresh extractions vary between runs: Haiku once left out
+the marketing screen's header (`Soo-jin Park · sj.park@naver.com`), which removed the Q10 contradiction
+and let a wrong catalog claim through (eval case_63), and once turned a reference in an account panel
+(`Support: CS-8538 · support_9538`) into a separate record, which brought an out-of-scope ticket back
+into case_34. Caching makes reruns identical, but the cold run decides what is cached. Fix: the
+extraction prompt now requires header identity fields on the main record and keeps references as
+field values; the marketing screen was added to the truth set (70 facts, 4 screenshots + 2 PDFs).
+Re-test: Haiku vision 70/70 and Sonnet vision 70/70, 0 mix-ups, 0 invented IDs.
 
 ### 7.3 Link suite
 

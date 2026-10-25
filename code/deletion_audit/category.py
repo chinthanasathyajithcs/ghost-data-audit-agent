@@ -25,6 +25,7 @@ from deletion_audit.usage import UsageRecorder
 
 OTHER = "OTHER"
 BATCH_SIZE = 25
+VOTES = 3  # each batch is answered three times; the majority category wins (borderline signatures wobble)
 MAX_VALUES = 25
 MAX_VALUE_LENGTH = 80
 TECHNICAL_KEYS = {"level", "severity", "logger", "instance", "pod", "region", "trace_id", "requestId", "attempt",
@@ -149,6 +150,21 @@ class CategoryClassifier:
                 "properties": {"results": {"type": "array", "items": item}}}
 
     def _ask(self, batch: list[tuple[str, tuple[dict, list[str]]]]) -> dict[str, str]:
+        """Majority of VOTES independent answers per signature; the votes are kept in the cache."""
+        ballots = [self._ask_once(batch) for _ in range(VOTES)]
+        decided = {}
+        for key, (sig, _) in batch:
+            votes = Counter(b[key][0] for b in ballots if key in b)
+            category = votes.most_common(1)[0][0]
+            reason = next(b[key][1] for b in ballots if b.get(key, ("",))[0] == category)
+            decided[key] = category
+            self.cache.put(key, {"category": category, "reason": reason, "votes": dict(votes), "signature": sig,
+                                 "model": self.model,
+                                 "classified_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+        return decided
+
+    def _ask_once(self, batch: list[tuple[str, tuple[dict, list[str]]]]) -> dict[str, tuple[str, str]]:
+        """One answer per signature: {key: (category, reason)}; missing answers are re-asked in halves."""
         ids = {f"s{i}": key for i, (key, _) in enumerate(batch, start=1)}
         records = [{"id": i, "signature": batch_item[1][0]} for i, batch_item in zip(ids, batch)]
         user_input = json.dumps({"policy": self.policy, "records": records}, ensure_ascii=False)
@@ -162,10 +178,7 @@ class CategoryClassifier:
         for item in data.get("results", []) if isinstance(data, dict) else []:
             key = ids.get(item.get("id")) if isinstance(item, dict) else None
             if key and item.get("category") in self.categories and key not in answers:
-                answers[key] = item["category"]
-                self.cache.put(key, {"category": item["category"], "reason": str(item.get("reason", "")),
-                                     "signature": dict(batch)[key][0], "model": self.model,
-                                     "classified_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+                answers[key] = (item["category"], str(item.get("reason", "")))
         missing = [k for k in ids.values() if k not in answers]
         if missing and len(batch) == 1:
             raise CategoryError(f"no valid category for signature {json.dumps(batch[0][1][0])[:200]}")
@@ -174,5 +187,5 @@ class CategoryClassifier:
             retry = [item for item in batch if item[0] in missing]
             for part in (retry[:middle], retry[middle:]):
                 if part:
-                    answers.update(self._ask(part))
+                    answers.update(self._ask_once(part))
         return answers

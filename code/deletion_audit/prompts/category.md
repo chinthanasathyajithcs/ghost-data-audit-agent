@@ -27,9 +27,11 @@ Use one `data_category` from `policy`, or one of:
    lookup result or an authorization decision, or nothing at all), decide from those two.
    Log signatures describe what a service did with the record: classify the record itself (a message
    scanned for personal data is still a support message), not the log.
-2. A record whose purpose is to look up or contact a person by an identifier (a contact index,
-   contact lookup, legacy contact entry, marketing contact with opt-in) is a `SECONDARY_IDENTIFIER`,
-   even when it lives in a support or analytics system.
+2. A record whose purpose is to look up or contact a person by an identifier is a
+   `SECONDARY_IDENTIFIER`, even when it lives in a support or analytics system — but only when its own
+   signature says so (a contact lookup, contact index or legacy contact entry, a contact with an
+   opt-in). A record the signature names as a ticket, message or conversation is a `SUPPORT_MESSAGE`,
+   even if only its contact fields are visible.
 3. A file a customer uploaded (attachment, uploaded document) is a `SUPPORT_ATTACHMENT`; a
    conversation or ticket thread is a `SUPPORT_MESSAGE`.
 4. Account profiles are `USER_PROFILE`; a deleted account's remaining reference record is an

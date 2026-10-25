@@ -25,3 +25,13 @@ One row per full-suite run of `code/evaluation/main.py`. Metric definitions: `co
 | 2026-10-25 12:08 | e4b2344+dirty | stage 7: first full agent (decisions -> steps) | samples | 32 | 100.0% | 100.0% / 90.7% / 95.1% | 88.7% | 56.2% | 87.4% | 18/32 | 0 |
 | 2026-10-25 12:08 | e4b2344+dirty | stage 7: first full agent (decisions -> steps) | custom | 8 | 100.0% | 100.0% / 90.9% / 95.2% | 89.6% | 75.0% | 94.4% | 6/8 | 0 |
 | 2026-10-25 12:08 | e4b2344+dirty | stage 7: first full agent (decisions -> steps) | all | 40 | 100.0% | 100.0% / 90.7% / 95.1% | 88.8% | 60.0% | 88.8% | 24/40 | 0 |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8: final run (cold caches, extraction + category fixes, voted categories) | samples | 32 | 100.0% | 100.0% / 90.7% / 95.1% | 88.7% | 56.2% | 87.4% | 18/32 | 0 |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8: final run (cold caches, extraction + category fixes, voted categories) | custom | 8 | 100.0% | 100.0% / 90.9% / 95.2% | 89.6% | 75.0% | 94.4% | 6/8 | 0 |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8: final run (cold caches, extraction + category fixes, voted categories) | all | 40 | 100.0% | 100.0% / 90.7% / 95.1% | 88.8% | 60.0% | 88.8% | 24/40 | 0 |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8 final: intent | intent | 402 | 100.0% | — | — | — | — | — | — |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8 final: links | links:samples | 111 | recall 83.8% | precision 100.0% | — | — | — | — | — |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8 final: links | links:custom | 14 | recall 85.7% | precision 100.0% | — | — | — | — | — |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8 final: states | states:samples | 93 | state 100.0% | proof 100.0% | — | — | — | — | — |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8 final: states | states:custom | 12 | state 100.0% | proof 100.0% | — | — | — | — | — |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8 final: decisions | decisions:samples | 93 | exact 100.0% | finding cites 100.0% | — | — | — | — | 0 review(s) |
+| 2026-10-25 13:02 | 8c4efc6+dirty | stage 8 final: decisions | decisions:custom | 12 | exact 100.0% | finding cites 100.0% | — | — | — | — | 0 review(s) |

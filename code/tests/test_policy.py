@@ -73,7 +73,7 @@ def test_classifier_uses_explicit_labels_first_and_caches_signatures(tmp_path):
 
     assert first == second == {"support_1": ("SUPPORT_MESSAGE", "llm"), "support_2": ("SUPPORT_MESSAGE", "llm"),
                                "support_3": ("SUPPORT_ATTACHMENT", "label")}
-    assert backend.calls == 1
+    assert backend.calls == 3  # one batch, answered three times for the majority vote
 
 
 def facet(value, proof="evidence_9"):
@@ -153,3 +153,27 @@ def test_log_signature_uses_only_the_lines_that_name_the_resource():
     assert sig["events"] == ["message_pii_scan"]
     assert "pool" not in sig["fields"] and "reason" not in sig["fields"]
     assert sig["resource_kind"] == "support"
+
+
+class WobblyBackend(FakeBackend):
+    """Answers SUPPORT_MESSAGE, then SECONDARY_IDENTIFIER, then SUPPORT_MESSAGE: one wobble out of three."""
+
+    def complete_json(self, system_prompt, user_input, schema, model, read_dirs=()):
+        self.calls += 1
+        category = "SECONDARY_IDENTIFIER" if self.calls == 2 else "SUPPORT_MESSAGE"
+        items = json.loads(user_input)["records"]
+        return {"results": [{"id": i["id"], "category": category, "reason": "r"} for i in items]}, \
+            CallUsage(model, 1, 0, 0, 5, 0.001, 1.0)
+
+
+def test_categories_are_decided_by_a_majority_of_three_answers(tmp_path):
+    backend = WobblyBackend()
+    cache = JsonCache(tmp_path / "c.json")
+    classifier = CategoryClassifier(backend, cache, "m", RULES, prompt="Classify.")
+
+    result = classifier.classify({"support_1": [obs({"requester_email": "a@b.c"})]})
+
+    assert result == {"support_1": ("SUPPORT_MESSAGE", "llm")}
+    assert backend.calls == 3
+    (entry,) = json.loads((tmp_path / "c.json").read_text()).values()
+    assert entry["votes"] == {"SUPPORT_MESSAGE": 2, "SECONDARY_IDENTIFIER": 1}

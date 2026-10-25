@@ -134,6 +134,19 @@ linked resources). Cost of a cold classification of every eval resource: 13 Haik
 A privacy gap was found by code review, not by a test: display names (`"Jonas Berg"`) passed the
 identifier filter. Identity and person fields' values are now never sent (test added).
 
+### 7.3.1 Category variance found in the Stage 8 cold runs
+
+Two cold runs (empty caches) classified the same thin signature differently: a support ticket seen
+only through readback log lines (`support_ticket_read_*` and requester fields, no message text) was a
+`SUPPORT_MESSAGE` in one run and a "requester contact lookup" `SECONDARY_IDENTIFIER` in the next.
+Because answers are shared per signature, that one answer flipped 7 eval tickets from redact to delete
+(3 cases from `COMPLETE` to `INCOMPLETE`); sample case_18 shares the signature, so the decision suite
+would also have failed. Fixes: (1) **majority vote** — every category batch is answered three times
+and the majority wins, with the votes stored in the cache; (2) the prompt now calls a record a
+secondary identifier only when its own signature says contact (contact lookup, contact index, opt-in)
+and calls anything named a ticket, message or conversation a `SUPPORT_MESSAGE`. Re-test: samples 93/93,
+custom 12/12, and all 52 sample signatures unanimous across the three answers.
+
 ### 7.4 Notes
 
 - The prompt carries short guidance on four distinctions the policy implies (contact lookups are

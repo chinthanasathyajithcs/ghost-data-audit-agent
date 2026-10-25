@@ -36,6 +36,13 @@
                       "18 Jun 2026", "delivery_address_correction.pdf", "uploader customer", "12 Sep 2026 07:30 UTC"]
     }
   },
+  "evidence_60": {
+    "path": "evidence/images/marketing_profile_console.png",
+    "facts": {
+      "marketing_001": ["Soo-jin Park", "sj.park@naver.com", "+82 10-5837-9451", "South Korea", "Korean",
+                        "15 Sep 2026 23:40 UTC", "Returning customers — East Asia"]
+    }
+  },
   "evidence_55": {
     "path": "evidence/documents/security_retention_extract.pdf",
     "facts": {

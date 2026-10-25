@@ -182,3 +182,14 @@ def test_cache_survives_reload_and_rejects_a_corrupt_file(tmp_path):
     path.write_text("{not json", encoding="utf-8")
     with pytest.raises(CacheError):
         JsonCache(path)
+
+
+def test_usage_can_be_summarised_per_task():
+    recorder = UsageRecorder()
+    recorder.record("intent", CallUsage("m", 1, 0, 0, 10, 0.01, 1.0), 25)
+    recorder.record("extraction:vision", CallUsage("m", 2, 0, 0, 20, 0.02, 1.0), 1)
+
+    tasks = recorder.summary(by="task")
+
+    assert set(tasks) == {"intent", "extraction"}
+    assert tasks["extraction"]["output_tokens"] == 20

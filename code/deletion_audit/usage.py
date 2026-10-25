@@ -27,11 +27,11 @@ class UsageRecorder:
             with open(self.log_path, "a", encoding="utf-8") as handle:
                 handle.write(json.dumps(entry) + "\n")
 
-    def summary(self) -> dict[str, dict]:
-        """Per-model totals: calls, token counts, cost and wall time."""
+    def summary(self, by: str = "model") -> dict[str, dict]:
+        """Totals per model (or per task): calls, token counts, cost and wall time."""
         totals: dict[str, dict] = defaultdict(lambda: dict.fromkeys(("calls", *TOKEN_FIELDS, "cost_usd", "duration_s"), 0))
         for entry in self.records:
-            model = totals[entry["model"]]
+            model = totals[entry[by].split(":")[0]]
             model["calls"] += 1
             for field in (*TOKEN_FIELDS, "cost_usd", "duration_s"):
                 model[field] += entry[field]
