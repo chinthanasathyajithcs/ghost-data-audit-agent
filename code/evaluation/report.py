@@ -119,6 +119,14 @@ def link_history_row(time: str, commit: str, label: str, suite: str, score) -> s
     return "| " + " | ".join(cells) + " |\n"
 
 
+def state_history_row(time: str, commit: str, label: str, suite: str, score) -> str:
+    """State suite row: Status = state accuracy, Step column = proof accuracy."""
+    cells = (time, commit, label.replace("|", "/"), suite, str(score.scored),
+             f"state {pct(score.accuracy).strip()}", f"proof {pct(score.proof_accuracy).strip()}", "—", "—", "—",
+             "—", "—")
+    return "| " + " | ".join(cells) + " |\n"
+
+
 def metrics_dict(result: Score, problems: list[str]) -> dict:
     return {
         "cases": result.cases,

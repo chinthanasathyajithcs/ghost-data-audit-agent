@@ -8,6 +8,7 @@
     python code/evaluation/main.py --label "stage 3 identity"            # name the run in run_history.md
     python code/evaluation/main.py --suite intent                        # Stage 2 classifier on all distinct texts
     python code/evaluation/main.py --suite links                         # Stage 4 case files vs expected resources
+    python code/evaluation/main.py --suite states                        # Stage 5 states vs states the answers imply
 
 Metric definitions: scoring.py and code/docs/stages/stage_1_evaluation_harness.md §4.2.
 """
@@ -32,6 +33,7 @@ from deletion_audit.validate import load_citation_times, validate_file, validate
 import report  # noqa: E402
 from intent_suite import format_intent_score, run_intent_suite  # noqa: E402
 from link_suite import format_link_scores, run_link_suite  # noqa: E402
+from state_suite import format_state_scores, run_state_suite  # noqa: E402
 from scoring import score  # noqa: E402
 
 SUITES = {
@@ -44,9 +46,9 @@ HISTORY_FILE = EVAL_DIR / "run_history.md"
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Score the deletion audit agent against known answers.")
-    parser.add_argument("--suite", choices=("all", *SUITES, "intent", "links"), default="all",
+    parser.add_argument("--suite", choices=("all", *SUITES, "intent", "links", "states"), default="all",
                         help="all = samples + custom; intent = Stage 2 classifier on every distinct text; "
-                             "links = Stage 4 case files")
+                             "links = Stage 4 case files; states = Stage 5 states")
     parser.add_argument("--cases", default="", help="comma-separated case_ids (no history row is written)")
     parser.add_argument("--predictions", type=Path, help="score this file instead of running the agent")
     parser.add_argument("--diff", action="store_true", help="print the diff of every failing case")
@@ -160,6 +162,14 @@ def run_links(args: argparse.Namespace) -> int:
     identity = IdentityIndex.from_dataset(DATASET_DIR)
     extractor = DocumentExtractor(ClaudeCliBackend(), JsonCache(EXTRACTION_CACHE_FILE), EXTRACTION_MODEL)
     store = EvidenceStore.load(DATASET_DIR, identity, document_reader(extractor))
+    if args.suite == "states":
+        state_scores = run_state_suite(SUITES, store, identity, load_predictions)
+        print(format_state_scores(state_scores))
+        if not args.no_history:
+            stamp, commit = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"), git_commit()
+            append_history([report.state_history_row(stamp, commit, args.label, f"states:{name}", s)
+                            for name, s in state_scores.items()])
+        return 0
     scores = run_link_suite(SUITES, store, identity, load_predictions)
     print(format_link_scores(scores, store.skipped))
     if not args.no_history:
@@ -181,7 +191,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.suite == "intent":
         return run_intent(args)
-    if args.suite == "links":
+    if args.suite in ("links", "states"):
         return run_links(args)
 
     wanted = {c.strip() for c in args.cases.split(",") if c.strip()}

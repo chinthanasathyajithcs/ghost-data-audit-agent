@@ -276,7 +276,8 @@ extractors, never by the agent.
 - FR-5.2 Detect recreation (a sync/import re-creating deleted data after the delete).
 - FR-5.3 Compare replicas (primary, read, regional, reporting, failover) for drift.
 - FR-5.4 Detect active data flows and restorable backups.
-- **Status:** Not started.
+- **Stage doc:** [`stages/stage_5_state_reconstruction.md`](stages/stage_5_state_reconstruction.md)
+- **Status:** **Done** (2026-10-25) — four facets (existence, identity, flow, restore), latest observation up to `audit_at` wins, any copy present means present, absence from the latest covering snapshot only when nothing else speaks, cache-lookup noise ignored. Samples: 93/93 states, 65/65 proofs; all 1,542 eval resource states consistent.
 
 ### Stage 6 — Policy engine
 - FR-6.1 Map each resource to a data category and apply the matching rule and condition.

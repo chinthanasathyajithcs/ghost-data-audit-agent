@@ -6,8 +6,9 @@
 Stage 2: requests that do not authorise deletion become NOT_APPLICABLE (LLM, cached).
 Stage 3: each deletion request is resolved to its subject (every current and old identifier).
 Stage 4: all evidence is read (screenshots and PDFs through the cached extractor) and each deletion
-request gets a case file of the subject's resources. Deletion requests still get a stub decision
-(INCOMPLETE, no steps) until Stages 5–7 replace it.
+request gets a case file of the subject's resources.
+Stage 5: each resource's state at audit_at (existence, identity, flow, restore) with the file proving it.
+Deletion requests still get a stub decision (INCOMPLETE, no steps) until Stages 6–7 replace it.
 """
 
 from __future__ import annotations
@@ -43,6 +44,7 @@ from deletion_audit.intent import IntentClassifier, IntentError, IntentResult
 from deletion_audit.linking import CaseFile, build_case_file
 from deletion_audit.llm import ClaudeCliBackend
 from deletion_audit.readers import document_reader
+from deletion_audit.state import resolve_state
 from deletion_audit.usage import UsageRecorder
 from deletion_audit.validate import load_citation_times, validate_rows
 
@@ -97,14 +99,18 @@ def audit_all(
     return answers, stats, case_files
 
 
-def explain(case_file: CaseFile) -> str:
+def explain(case_file: CaseFile, store: EvidenceStore, audit_at: datetime) -> str:
     s = case_file.subject
     lines = [f"--- {case_file.case_id}: {s.user_id} ({s.name}), request email {s.request_email} ({s.matched_via})",
              f"    {len(case_file.resources)} resource(s); {case_file.rejected} other people's resource(s) rejected"]
     for r in case_file.resources:
         cited = sorted({o.evidence_id for o in r.observations})
+        state = resolve_state(r, store.coverage, audit_at, store.files_by_resource)
+        facets = ", ".join(f"{name}={facet.value}@{facet.proof or '-'}" for name in ("existence", "identity", "flow",
+                                                                                   "restore")
+                           if (facet := getattr(state, name)) is not None)
         lines.append(f"    {r.system_id or '?'}/{r.resource_id}  [{'+'.join(sorted(r.methods))}]  "
-                     f"{len(r.observations)} observation(s) in {', '.join(cited) or 'activity only'}")
+                     f"{len(r.observations)} observation(s) in {', '.join(cited) or 'activity only'}  → {facets}")
     if case_file.conflicts:
         lines.append(f"    catalog links contradicted by evidence: {', '.join(case_file.conflicts)}")
     return "\n".join(lines)
@@ -166,9 +172,10 @@ def main(argv: list[str] | None = None) -> int:
     print(usage.format_summary(classifier.cache_hits + extractor.cache_hits), file=sys.stderr)
     write_usage_summary(usage, len(requests), classifier.cache_hits)
     if args.explain:
-        for case_file in case_files.values():
+        audit_times = {r["case_id"]: parse_time(r["audit_at"]) for r in requests}
+        for case_id, case_file in case_files.items():
             if case_file is not None:
-                print(explain(case_file))
+                print(explain(case_file, store, audit_times[case_id]))
     return 0
 
 

@@ -43,6 +43,9 @@ class EvidenceStore:
         self.system_conflicts = system_conflicts
         self.skipped = skipped
         self._owners = {id(o): owner for o, owner in zip(observations, owners)}
+        self.files_by_resource: dict[str, set[str]] = defaultdict(set)  # evidence files that show each resource
+        for o in observations:
+            self.files_by_resource[o.resource_id].add(o.evidence_id)
         self._by_resource: dict[str, list[Observation]] = defaultdict(list)
         for o in sorted(observations, key=lambda o: (o.observed_at, o.evidence_id, o.location)):
             self._by_resource[o.resource_id].append(o)
