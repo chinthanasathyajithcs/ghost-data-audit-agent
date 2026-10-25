@@ -3,3 +3,4 @@ __pycache__/
 code/evaluation/runs/
 .env
 code/usage/
+.venv/

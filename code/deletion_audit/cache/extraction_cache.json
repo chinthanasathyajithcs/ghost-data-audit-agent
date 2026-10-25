@@ -1,0 +1,618 @@
+{
+ "1d4afe152c7f362a00edbe72340a6f993b73eb07ca45d0af11c708681abac93a": {
+  "extracted_at": "2026-10-25T10:33:54+00:00",
+  "file": "marketing_profile_console.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Audience": "Returning customers — East Asia",
+     "Click rate": "6.8%",
+     "Email opt-in": "Yes",
+     "Language": "Korean",
+     "Last campaign": "Autumn offers",
+     "Last refreshed": "15 Sep 2026 23:40 UTC",
+     "Market": "South Korea",
+     "Open rate": "32.4%",
+     "Preferred categories": "Desk accessories · Drinkware",
+     "SMS opt-in": "No",
+     "Segments": "Repeat customer · Home & lifestyle · Mobile shopper",
+     "contact": "sj.park@naver.com · +82 10-5837-9451",
+     "name": "Soo-jin Park",
+     "status": "Live"
+    },
+    "resource_id": "marketing_001"
+   }
+  ]
+ },
+ "359014473d30366f875dc3e78d42462f764cdc4f7f72517ed8e1039240652032": {
+  "extracted_at": "2026-10-25T10:33:44+00:00",
+  "file": "delivery_correction_attachment.pdf",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Customer request": "change apartment number from 14B to 18B and call before delivery",
+     "Product": "Stainless steel water bottle, quantity 2",
+     "captured": "12 Sep 2026 07 30 UTC",
+     "carrier": "SwiftShip",
+     "checksum prefix": "c90a42",
+     "email": "priya.raman@gmail.com",
+     "file": "delivery_address_correction.pdf",
+     "name": "Priya Raman",
+     "order": "ORD-20264827",
+     "phone": "+91 98765 73142",
+     "preferred contact": "SMS",
+     "received": "18 Jun 2026",
+     "record": "Northstar Shop Delivery Address Correction Request",
+     "reference": "CS-4827 / support_001",
+     "region": "ap-south",
+     "size": "312 KB",
+     "submitted": "18 Jun 2026 10 24 UTC",
+     "ticket": "CS-4827",
+     "uploader": "customer"
+    },
+    "resource_id": "support_001"
+   }
+  ]
+ },
+ "3741eab4423de851883a4deeaf9c3b31c78509c350d6917c229679b4baabac12": {
+  "extracted_at": "2026-10-25T10:31:27+00:00",
+  "file": "legal_retention_register_20260529.pdf",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "amount": "USD 184.20",
+     "finance_owner": "AR",
+     "invoice_date": "04 May 2026",
+     "order_reference": "ORD-20264118",
+     "retain_until": "04 May 2033",
+     "type": "Card dispute"
+    },
+    "resource_id": "user_08"
+   },
+   {
+    "fields": {
+     "amount": "EUR 72.40",
+     "finance_owner": "ML",
+     "invoice_date": "09 May 2026",
+     "order_reference": "ORD-20264207",
+     "retain_until": "09 May 2033",
+     "type": "Tax correction"
+    },
+    "resource_id": "user_12"
+   },
+   {
+    "fields": {
+     "amount": "GBP 219.00",
+     "finance_owner": "SK",
+     "invoice_date": "14 May 2026",
+     "order_reference": "ORD-20264319",
+     "retain_until": "14 May 2033",
+     "type": "Chargeback"
+    },
+    "resource_id": "user_17"
+   },
+   {
+    "fields": {
+     "amount": "CAD 96.55",
+     "finance_owner": "AR",
+     "invoice_date": "18 May 2026",
+     "order_reference": "ORD-20264402",
+     "retain_until": "18 May 2033",
+     "type": "Invoice inquiry"
+    },
+    "resource_id": "user_21"
+   },
+   {
+    "fields": {
+     "amount": "AUD 311.80",
+     "finance_owner": "ML",
+     "invoice_date": "23 May 2026",
+     "order_reference": "ORD-20264511",
+     "retain_until": "23 May 2033",
+     "type": "Card dispute"
+    },
+    "resource_id": "user_24"
+   },
+   {
+    "fields": {
+     "amount": "USD 48.75",
+     "finance_owner": "SK",
+     "invoice_date": "28 May 2026",
+     "order_reference": "ORD-20264600",
+     "retain_until": "28 May 2033",
+     "type": "Tax record"
+    },
+    "resource_id": "user_29"
+   }
+  ]
+ },
+ "5d5d9700e0b50515c0bdb7cc60792aa2b48ee63b5da2464772269d232d777ef2": {
+  "extracted_at": "2026-10-25T10:31:15+00:00",
+  "file": "customer_export_console_20260618.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Created": "20 Jun 14:18 UTC",
+     "Export ID": "export_1261",
+     "Filename": "customer_export_1261.zip",
+     "Owner": "marcus.lee@northstar.shop",
+     "Status": "Collecting"
+    },
+    "resource_id": "export_1261"
+   },
+   {
+    "fields": {
+     "Checksum": "SHA-256 · 41ca09...",
+     "Created": "18 Jun 06:42 UTC",
+     "Download count": "0",
+     "Expires": "25 Jun 2026 06:42 UTC",
+     "Export ID": "export_1260",
+     "Filename": "customer_export_1260.zip",
+     "Included": "Profile · Orders · Saved addresses",
+     "Owner": "ingrid.dahl@outlook.com",
+     "Size": "18.4 MB",
+     "Status": "Ready"
+    },
+    "resource_id": "export_1260"
+   },
+   {
+    "fields": {
+     "Created": "17 Jun 11:03 UTC",
+     "Export ID": "export_1259",
+     "Filename": "customer_export_1259.zip",
+     "Owner": "sara.kim@northstar.shop",
+     "Status": "Packaging"
+    },
+    "resource_id": "export_1259"
+   },
+   {
+    "fields": {
+     "Created": "16 Jun 09:27 UTC",
+     "Export ID": "export_1258",
+     "Filename": "customer_export_1258.zip",
+     "Owner": "daniel.park@northstar.shop",
+     "Status": "Ready"
+    },
+    "resource_id": "export_1258"
+   }
+  ]
+ },
+ "609c51359f3d9350a63071eb51f421eaa4f1c9c5a43a99346c96da398f4211b9": {
+  "extracted_at": "2026-10-25T10:31:53+00:00",
+  "file": "backup_restore_console_20260429.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Account": "bluepeakco@outlook.com",
+     "Created": "26 Apr 02:00",
+     "Encryption": "AES-256",
+     "Region": "ap-southeast-1",
+     "Size": "102.3 GB",
+     "Tier": "Archive"
+    },
+    "resource_id": "backup_9291"
+   },
+   {
+    "fields": {
+     "Account": "miller.logistics@company.com",
+     "Created": "26 Apr 02:00",
+     "Encryption": "AES-256",
+     "Region": "us-west-2",
+     "Size": "67.1 GB",
+     "Tier": "Archive"
+    },
+    "resource_id": "backup_9288"
+   },
+   {
+    "fields": {
+     "Account": "areed1433@gmail.com",
+     "Checksum": "Verified",
+     "Created": "26 Apr 2026 02:00 UTC",
+     "Encryption": "AES-256",
+     "Last drill": "29 Mar 2026",
+     "Path": "s3://northstar-backups/customer-platform/weekly/segment-42-20260426.tar.zst",
+     "Region": "eu-west-1",
+     "Retention end": "26 Jul 2026",
+     "Size": "84.7 GB",
+     "Tier": "Archive"
+    },
+    "resource_id": "backup_9287"
+   },
+   {
+    "fields": {
+     "Account": "summit-retail@company.com",
+     "Created": "26 Apr 02:00",
+     "Encryption": "AES-256",
+     "Region": "us-east-1",
+     "Size": "91.4 GB",
+     "Tier": "Archive"
+    },
+    "resource_id": "backup_9286"
+   }
+  ]
+ },
+ "64ad6b9d14ff0412bc10c76baf01bd9e3e998f7b21440eb2eef5ff28c41d0ea1": {
+  "extracted_at": "2026-10-25T10:33:29+00:00",
+  "file": "security_retention_extract.pdf",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "actor": "automated account workflow",
+     "classification": "Internal Restricted",
+     "event": "Account closure recorded",
+     "event reference": "audit_record_003",
+     "integrity seal": "valid",
+     "issued": "05 Sep 2026 06 30 UTC",
+     "journal partition": "2026-Q3",
+     "product": "Northstar Shop Compliance Journal",
+     "record version": "1",
+     "recorded": "25 Aug 2026 04 03 UTC",
+     "reference": "CJX-20260905-0630",
+     "retain until": "25 Aug 2027 04 03 UTC",
+     "short fingerprint": "8f0c…31ad",
+     "storage class": "compliance-ledger",
+     "subject reference": "user_03"
+    },
+    "resource_id": "audit_record_003"
+   }
+  ]
+ },
+ "6bde4de46fdb3ca139d6623f6238e5311de6e713a3e5eb57bcd2053a0d6803e2": {
+  "extracted_at": "2026-10-25T10:30:30+00:00",
+  "file": "search_index_inspector_20260901.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Customer reference": "user_13",
+     "Display name": "Gabriel Silva",
+     "Email": "g.silva76@gmail.com",
+     "Last indexed": "05:58:21 UTC",
+     "Score": "9.84",
+     "_id": "search_428",
+     "_index": "customer_directory_v3",
+     "customer_reference": "user_13",
+     "display_name": "Gabriel Silva",
+     "email": "g.silva76@gmail.com",
+     "indexed_at": "2026-09-01T05:58:21Z"
+    },
+    "resource_id": "search_428"
+   },
+   {
+    "fields": {
+     "Customer reference": "—",
+     "Display name": "—",
+     "Email": "g.silva76.jr@gmail.com",
+     "Last indexed": "05:55:03 UTC",
+     "Score": "4.12",
+     "_id": "search_1874"
+    },
+    "resource_id": "search_1874"
+   }
+  ]
+ },
+ "889cb3ce066f66320b6fdce84a1b96ebccf0e52d77823621b7d46b5233a775cb": {
+  "extracted_at": "2026-10-25T10:30:19+00:00",
+  "file": "account_admin_console_20260926.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Default address": "2-18-4 Kichijoji, Musashino, Tokyo 180-0004",
+     "Email": "haruka.s1838@zoho.com",
+     "Last contact": "24 Sep 2026 09:14 JST",
+     "Loyalty tier": "Silver",
+     "Market": "JP",
+     "Member since": "12 Jan 2024",
+     "Phone": "+81 90 7610 2507",
+     "Preferred language": "Japanese",
+     "Signup channel": "mobile_app",
+     "Support": "CS-8538 · support_9538",
+     "name": "Haruka Sato",
+     "user": "user_11"
+    },
+    "resource_id": "account_5762"
+   }
+  ]
+ },
+ "aade0bc2028a12a9d6a3b794140f22b038346858f9567f5fc726923068c22265": {
+  "extracted_at": "2026-10-25T10:32:07+00:00",
+  "file": "security_audit_explorer_20260905.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Actor": "Automated workflow",
+     "Category": "Account lifecycle",
+     "Event": "Account closure recorded",
+     "Integrity": "Valid",
+     "Reference": "audit_record_003",
+     "Subject": "user_03",
+     "Time (UTC)": "25 Aug 04:03",
+     "actor": "automated account workflow",
+     "event_type": "account_closure_recorded",
+     "fingerprint": "8f0c...31ad",
+     "journal": "2026-Q3",
+     "recorded_at": "2026-08-25T04:03:00Z",
+     "signature": "Valid",
+     "subject": "user_03"
+    },
+    "resource_id": "audit_record_003"
+   },
+   {
+    "fields": {
+     "Actor": "Security system",
+     "Category": "Session management",
+     "Event": "Session revoked",
+     "Integrity": "Valid",
+     "Reference": "audit_record_002",
+     "Subject": "user_03",
+     "Time (UTC)": "25 Aug 03:21"
+    },
+    "resource_id": "audit_record_002"
+   },
+   {
+    "fields": {
+     "Actor": "User (self)",
+     "Category": "Authentication",
+     "Event": "Recovery challenge completed",
+     "Integrity": "Valid",
+     "Reference": "audit_record_001",
+     "Subject": "user_03",
+     "Time (UTC)": "24 Aug 16:14"
+    },
+    "resource_id": "audit_record_001"
+   },
+   {
+    "fields": {
+     "Actor": "User (self)",
+     "Category": "Profile update",
+     "Event": "Email change confirmed",
+     "Integrity": "Valid",
+     "Reference": "audit_record_006",
+     "Subject": "user_03",
+     "Time (UTC)": "22 Aug 11:27"
+    },
+    "resource_id": "audit_record_006"
+   },
+   {
+    "fields": {
+     "Actor": "User (self)",
+     "Category": "Authentication",
+     "Event": "Login from new device",
+     "Integrity": "Valid",
+     "Reference": "audit_record_005",
+     "Subject": "user_03",
+     "Time (UTC)": "20 Aug 09:42"
+    },
+    "resource_id": "audit_record_005"
+   },
+   {
+    "fields": {
+     "Actor": "User (self)",
+     "Category": "Authentication",
+     "Event": "Password changed",
+     "Integrity": "Valid",
+     "Reference": "audit_record_004",
+     "Subject": "user_03",
+     "Time (UTC)": "18 Aug 14:05"
+    },
+    "resource_id": "audit_record_004"
+   }
+  ]
+ },
+ "b6158f6959c0aef8336bda1915b54991b9b61b362378d10c95d12b03d445b4c4": {
+  "extracted_at": "2026-10-25T10:32:33+00:00",
+  "file": "object_storage_browser_20260213.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Checksum": "e71b6d...",
+     "Content type": "application/pdf",
+     "Encryption": "AES-256",
+     "Modified": "12 Feb 2026 18:42 UTC",
+     "Modified (UTC)": "12 Feb 18:42",
+     "Name": "delivery_confirmation_19.pdf",
+     "Size": "684 KB",
+     "Storage class": "Standard",
+     "Uploader": "support-service",
+     "Version": "v3"
+    },
+    "resource_id": "delivery_confirmation_19"
+   },
+   {
+    "fields": {
+     "Modified (UTC)": "11 Feb 14:17",
+     "Name": "delivery_confirmation_20.pdf",
+     "Size": "712 KB",
+     "Storage class": "Standard",
+     "Version": "v1"
+    },
+    "resource_id": "delivery_confirmation_20"
+   },
+   {
+    "fields": {
+     "Modified (UTC)": "10 Feb 09:33",
+     "Name": "return_label_4821.pdf",
+     "Size": "203 KB",
+     "Storage class": "Standard",
+     "Version": "v1"
+    },
+    "resource_id": "return_label_4821"
+   },
+   {
+    "fields": {
+     "Modified (UTC)": "11 Feb 16:05",
+     "Name": "return_label_4876.pdf",
+     "Size": "198 KB",
+     "Storage class": "Standard",
+     "Version": "v2"
+    },
+    "resource_id": "return_label_4876"
+   },
+   {
+    "fields": {
+     "Modified (UTC)": "12 Feb 10:08",
+     "Name": "parcel_damage_7713.jpg",
+     "Size": "2.4 MB",
+     "Storage class": "Standard",
+     "Version": "v1"
+    },
+    "resource_id": "parcel_damage_7713"
+   }
+  ]
+ },
+ "b726d34d068d7f95a1beba4db86388e00449b9eae75058de846130595b437091": {
+  "extracted_at": "2026-10-25T10:32:19+00:00",
+  "file": "deleted_account_reference_20260310.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Created": "11 Jan 2024 08:42 UTC",
+     "Most recent update": "10 Mar 2026 07:18 UTC",
+     "Owner team": "Account Platform",
+     "Reference type": "Customer key"
+    },
+    "resource_id": "user_17"
+   }
+  ]
+ },
+ "bb67d8a7c0ae9cb5c9887c125ebb66e418c47a1ae7cadee22a38f0025bd55b65": {
+  "extracted_at": "2026-10-25T10:30:52+00:00",
+  "file": "account_history_report_20260718.pdf",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "billing status": "paid",
+     "customer": "Ingrid Dahl",
+     "delivered": "14 Jul",
+     "delivery address": "24 Fjordgata, 7010 Trondheim, Norway",
+     "dispatched": "10 Jul",
+     "email": "ingrid.dahl@outlook.com",
+     "item": "Smart desk lamp, SKU LAMP-SD-04, quantity 1, subtotal EUR 54.95, shipping EUR 4.99, tax EUR 11.99, total EUR 71.93",
+     "order": "ORD-20261260",
+     "order date": "08 Jul 2026",
+     "payment": "Visa ending 4821",
+     "statement": "NST-2026-0718-1842",
+     "timeline": "order placed, payment authorised, warehouse packed, carrier collected, delivered",
+     "user": "user_18"
+    },
+    "resource_id": "user_18"
+   }
+  ]
+ },
+ "e22e050b5112f91f27f8fb52ba1d78f4a9d41a7678e9b6cfc25c5ccb34f18d05": {
+  "extracted_at": "2026-10-25T10:31:39+00:00",
+  "file": "support_ticket_console_20260524.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Assigned": "Maya Chen",
+     "Assigned agent": "Maya Chen",
+     "Carrier": "SwiftShip",
+     "Customer": "Kofi Agyeman",
+     "Email": "kagyeman8947@fastmail.com",
+     "Expected": "26 May 2026",
+     "Order": "ORD-20265034",
+     "Product": "Running shoes",
+     "SLA": "01:42",
+     "Status": "In transit",
+     "Tags": "Delivery · Tracking · Order update",
+     "Tracking": "SWF-884103",
+     "ticket": "CS-5034 · Where is my delivery?"
+    },
+    "resource_id": "support_1034"
+   }
+  ]
+ },
+ "ee0eef4b89b15dcf55dbf76b734f1bdcea20d7b5f91a15347b19ecd2857131e2": {
+  "extracted_at": "2026-10-25T10:30:41+00:00",
+  "file": "connector_management_console_20260807.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Connector": "data_flow_1121",
+     "Destination": "customer_analytics_warehouse",
+     "Events/hour": "1,284",
+     "Last contact": "07:59:42",
+     "Last response": "200 OK · 1.8 s",
+     "Mode": "Continuous",
+     "Owner": "Data Platform",
+     "Selector": "jain.aditi@gmail.com",
+     "Status": "Healthy",
+     "Sync mode": "Continuous sync"
+    },
+    "resource_id": "data_flow_1121"
+   },
+   {
+    "fields": {
+     "Connector": "data_flow_9846",
+     "Destination": "customer_analytics_warehouse",
+     "Events/hour": "842",
+     "Last contact": "07:59:36",
+     "Mode": "Continuous",
+     "Selector": "lucia-torres@gmail.com"
+    },
+    "resource_id": "data_flow_9846"
+   }
+  ]
+ },
+ "f0025e8db53417ec82655017e24f896a4bfce336b4e9e77d950aef7a2a388243": {
+  "extracted_at": "2026-10-25T10:31:02+00:00",
+  "file": "analytics_profile_view_20260713.png",
+  "mode": "vision",
+  "model": "claude-haiku-5-5",
+  "prompt_version": "a0d3c933f800",
+  "records": [
+   {
+    "fields": {
+     "Audience": "Returning shopper",
+     "First seen": "21 Apr 2026 09:14 UTC",
+     "Interest": "Coffee & dining",
+     "Last activity": "13 Jul 2026 14:22 UTC",
+     "Market": "AE"
+    },
+    "resource_id": "user_20"
+   }
+  ]
+ }
+}

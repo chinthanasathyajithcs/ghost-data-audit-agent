@@ -1,0 +1,47 @@
+{
+  "_about": "Hand-written ground truth for the Stage 4A extraction bake-off. Written by reading each file directly, never from a tool's output. Each fact is (resource_id, value as shown); a fact counts as found only if it appears in the extracted record with the same resource_id (row association). Used only for scoring.",
+  "evidence_32": {
+    "path": "evidence/images/backup_restore_console_20260429.png",
+    "facts": {
+      "backup_9291": ["bluepeakco@outlook.com", "ap-southeast-1", "102.3 GB"],
+      "backup_9288": ["miller.logistics@company.com", "us-west-2", "67.1 GB"],
+      "backup_9287": ["areed1433@gmail.com", "eu-west-1", "84.7 GB",
+                      "s3://northstar-backups/customer-platform/weekly/segment-42-20260426.tar.zst",
+                      "Verified", "29 Mar 2026", "26 Jul 2026"],
+      "backup_9286": ["summit-retail@company.com", "us-east-1", "91.4 GB"]
+    }
+  },
+  "evidence_14": {
+    "path": "evidence/images/connector_management_console_20260807.png",
+    "facts": {
+      "data_flow_1121": ["customer_analytics_warehouse", "jain.aditi@gmail.com", "1,284", "07:59:42",
+                         "Healthy", "Data Platform", "Continuous sync", "200 OK"],
+      "data_flow_9846": ["customer_analytics_warehouse", "lucia-torres@gmail.com", "842", "07:59:36"]
+    }
+  },
+  "evidence_23": {
+    "path": "evidence/images/customer_export_console_20260618.png",
+    "facts": {
+      "export_1261": ["customer_export_1261.zip", "marcus.lee@northstar.shop", "Collecting", "20 Jun 14:18 UTC"],
+      "export_1260": ["customer_export_1260.zip", "ingrid.dahl@outlook.com", "Ready", "18 Jun 2026 06:42 UTC",
+                      "25 Jun 2026 06:42 UTC", "18.4 MB", "Profile · Orders · Saved addresses"],
+      "export_1259": ["customer_export_1259.zip", "sara.kim@northstar.shop", "Packaging", "17 Jun 11:03 UTC"],
+      "export_1258": ["customer_export_1258.zip", "daniel.park@northstar.shop", "Ready", "16 Jun 09:27 UTC"]
+    }
+  },
+  "evidence_58": {
+    "path": "evidence/documents/delivery_correction_attachment.pdf",
+    "facts": {
+      "support_001": ["CS-4827", "Priya Raman", "priya.raman@gmail.com", "+91 98765 73142", "ORD-20264827",
+                      "18 Jun 2026", "delivery_address_correction.pdf", "uploader customer", "12 Sep 2026 07:30 UTC"]
+    }
+  },
+  "evidence_55": {
+    "path": "evidence/documents/security_retention_extract.pdf",
+    "facts": {
+      "audit_record_003": ["user_03", "Account closure recorded", "automated account workflow",
+                           "25 Aug 2026 04:03 UTC", "25 Aug 2027 04:03 UTC", "integrity seal valid",
+                           "CJX-20260905-0630"]
+    }
+  }
+}

@@ -1,11 +1,13 @@
 """Deletion audit agent — command-line entry point.
 
     python code/main.py [--requests dataset/deletion_requests.csv] [--output output.csv]
-                        [--cases id1,id2] [--refresh-intent]
+                        [--cases id1,id2] [--refresh-intent] [--explain]
 
 Stage 2: requests that do not authorise deletion become NOT_APPLICABLE (LLM, cached).
 Stage 3: each deletion request is resolved to its subject (every current and old identifier).
-Deletion requests still get a stub decision (INCOMPLETE, no steps) until Stages 4–7 replace it.
+Stage 4: all evidence is read (screenshots and PDFs through the cached extractor) and each deletion
+request gets a case file of the subject's resources. Deletion requests still get a stub decision
+(INCOMPLETE, no steps) until Stages 5–7 replace it.
 """
 
 from __future__ import annotations
@@ -18,7 +20,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from deletion_audit.cache import CacheError, JsonCache
-from deletion_audit.config import INTENT_CACHE_FILE, LAST_RUN_USAGE_FILE, USAGE_LOG_FILE
+from deletion_audit.config import (
+    EXTRACTION_CACHE_FILE,
+    EXTRACTION_MODEL,
+    INTENT_CACHE_FILE,
+    LAST_RUN_USAGE_FILE,
+    USAGE_LOG_FILE,
+)
 from deletion_audit.contract import (
     DATASET_DIR,
     REPO_ROOT,
@@ -28,9 +36,13 @@ from deletion_audit.contract import (
     read_csv_header,
     write_answers,
 )
-from deletion_audit.identity import IdentityIndex, Subject
+from deletion_audit.evidence import EvidenceStore
+from deletion_audit.extraction import DocumentExtractor, ExtractionError
+from deletion_audit.identity import IdentityIndex
 from deletion_audit.intent import IntentClassifier, IntentError, IntentResult
+from deletion_audit.linking import CaseFile, build_case_file
 from deletion_audit.llm import ClaudeCliBackend
+from deletion_audit.readers import document_reader
 from deletion_audit.usage import UsageRecorder
 from deletion_audit.validate import load_citation_times, validate_rows
 
@@ -48,32 +60,54 @@ class IdentityStats:
         return text + (f"; unresolved: {', '.join(self.unresolved)}" if self.unresolved else "; 0 unresolved")
 
 
-def audit_case(request: dict, intent: IntentResult, subject: Subject | None) -> Answer:
+def audit_case(request: dict, intent: IntentResult, case_file: CaseFile | None) -> Answer:
     """Decide one case."""
     if not intent.authorizes_deletion:
         return Answer("NOT_APPLICABLE", ())
-    return Answer("INCOMPLETE", ())  # Stages 4–7 replace this stub; an unresolved subject links no records
+    return Answer("INCOMPLETE", ())  # Stages 5–7 replace this stub; no case file means no linked records
 
 
 def audit_all(
-    requests: list[dict], classifier: IntentClassifier, identity: IdentityIndex, refresh_intent: bool = False
-) -> tuple[dict[str, Answer], IdentityStats]:
-    """Classify every request text in one batched pass, resolve each deletion request's subject, decide."""
+    requests: list[dict],
+    classifier: IntentClassifier,
+    identity: IdentityIndex,
+    store: EvidenceStore,
+    refresh_intent: bool = False,
+) -> tuple[dict[str, Answer], IdentityStats, dict[str, CaseFile | None]]:
+    """Classify every request in one batched pass, then resolve the subject, build the case file, decide."""
     intents = classifier.classify_all([r["request_text"] for r in requests], refresh=refresh_intent)
-    answers, subjects = {}, {}
+    answers, case_files = {}, {}
     for r in requests:
         intent = intents[r["request_text"]]
-        subject = identity.resolve(r["email"], parse_time(r["audit_at"])) if intent.authorizes_deletion else None
+        case_file = None
         if intent.authorizes_deletion:
-            subjects[r["case_id"]] = subject
-        answers[r["case_id"]] = audit_case(r, intent, subject)
-    resolved = [s for s in subjects.values() if s is not None]
+            audit_at = parse_time(r["audit_at"])
+            subject = identity.resolve(r["email"], audit_at)
+            if subject is not None:
+                case_file = build_case_file(r["case_id"], subject, parse_time(r["requested_at"]), audit_at,
+                                            parse_time(r["reported_at"]), r["reported_status"], store)
+            case_files[r["case_id"]] = case_file
+        answers[r["case_id"]] = audit_case(r, intent, case_file)
+    resolved = [c.subject for c in case_files.values() if c is not None]
     stats = IdentityStats(
         resolved=len(resolved),
         via_old_email=sum(s.matched_via == "historical" for s in resolved),
-        unresolved=sorted(c for c, s in subjects.items() if s is None),
+        unresolved=sorted(c for c, f in case_files.items() if f is None),
     )
-    return answers, stats
+    return answers, stats, case_files
+
+
+def explain(case_file: CaseFile) -> str:
+    s = case_file.subject
+    lines = [f"--- {case_file.case_id}: {s.user_id} ({s.name}), request email {s.request_email} ({s.matched_via})",
+             f"    {len(case_file.resources)} resource(s); {case_file.rejected} other people's resource(s) rejected"]
+    for r in case_file.resources:
+        cited = sorted({o.evidence_id for o in r.observations})
+        lines.append(f"    {r.system_id or '?'}/{r.resource_id}  [{'+'.join(sorted(r.methods))}]  "
+                     f"{len(r.observations)} observation(s) in {', '.join(cited) or 'activity only'}")
+    if case_file.conflicts:
+        lines.append(f"    catalog links contradicted by evidence: {', '.join(case_file.conflicts)}")
+    return "\n".join(lines)
 
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -82,6 +116,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--output", type=Path, default=REPO_ROOT / "output.csv")
     parser.add_argument("--cases", default="", help="comma-separated case_ids to audit (default: all)")
     parser.add_argument("--refresh-intent", action="store_true", help="ignore cached intent answers and re-ask the model")
+    parser.add_argument("--explain", action="store_true", help="print each deletion case's case file")
     return parser.parse_args(argv)
 
 
@@ -107,10 +142,14 @@ def main(argv: list[str] | None = None) -> int:
     requests = select_requests(read_csv(args.requests), args.cases)
     usage = UsageRecorder(USAGE_LOG_FILE)
     try:
-        classifier = IntentClassifier(ClaudeCliBackend(), JsonCache(INTENT_CACHE_FILE), usage=usage)
+        backend = ClaudeCliBackend()
+        classifier = IntentClassifier(backend, JsonCache(INTENT_CACHE_FILE), usage=usage)
+        extractor = DocumentExtractor(backend, JsonCache(EXTRACTION_CACHE_FILE), EXTRACTION_MODEL, usage=usage)
         identity = IdentityIndex.from_dataset(DATASET_DIR)
-        answers, identity_stats = audit_all(requests, classifier, identity, refresh_intent=args.refresh_intent)
-    except (IntentError, CacheError) as error:
+        store = EvidenceStore.load(DATASET_DIR, identity, document_reader(extractor))
+        answers, identity_stats, case_files = audit_all(requests, classifier, identity, store,
+                                                        refresh_intent=args.refresh_intent)
+    except (IntentError, ExtractionError, CacheError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     write_answers(args.output, answers)
@@ -121,9 +160,15 @@ def main(argv: list[str] | None = None) -> int:
     print(f"wrote {len(answers)} rows to {args.output}; format check: {len(problems)} problem(s)", file=sys.stderr)
     for problem in problems[:MAX_PROBLEMS_SHOWN]:
         print(f"  - {problem}", file=sys.stderr)
+    print(f"evidence: {len(store.observations)} observations, {len(store.coverage)} coverage entries, "
+          f"{len(store.skipped)} file(s) skipped", file=sys.stderr)
     print(identity_stats.describe(), file=sys.stderr)
-    print(usage.format_summary(classifier.cache_hits), file=sys.stderr)
+    print(usage.format_summary(classifier.cache_hits + extractor.cache_hits), file=sys.stderr)
     write_usage_summary(usage, len(requests), classifier.cache_hits)
+    if args.explain:
+        for case_file in case_files.values():
+            if case_file is not None:
+                print(explain(case_file))
     return 0
 
 

@@ -16,3 +16,5 @@ One row per full-suite run of `code/evaluation/main.py`. Metric definitions: `co
 | 2026-10-25 09:20 | 1b596a5+dirty | stage 3: identity resolution (no score change expected) | samples | 32 | 68.8% | 0.0% / 0.0% / 0.0% | 0.0% | 0.0% | 0.0% | 0/32 | 32 |
 | 2026-10-25 09:20 | 1b596a5+dirty | stage 3: identity resolution (no score change expected) | custom | 8 | 87.5% | 0.0% / 0.0% / 0.0% | 0.0% | 50.0% | 50.0% | 4/8 | 4 |
 | 2026-10-25 09:20 | 1b596a5+dirty | stage 3: identity resolution (no score change expected) | all | 40 | 72.5% | 0.0% / 0.0% / 0.0% | 0.0% | 10.0% | 10.0% | 4/40 | 36 |
+| 2026-10-25 10:34 | 9f4d33a+dirty | stage 4: identifier + scope rule + account activity, documents via haiku vision | links:samples | 111 | recall 83.8% | precision 100.0% | — | — | — | — | — |
+| 2026-10-25 10:34 | 9f4d33a+dirty | stage 4: identifier + scope rule + account activity, documents via haiku vision | links:custom | 14 | recall 85.7% | precision 100.0% | — | — | — | — | — |

@@ -1,0 +1,5 @@
+# The agent (code/main.py) and the evaluation harness use only the Python standard library (3.12+).
+# These packages are needed only for the tests and the Stage 4A extraction bake-off.
+pytest>=9.0          # code/tests
+pypdf>=6.0           # bake-off candidate E0 (PDF text layer)
+# docling            # bake-off candidate E1 (optional, large: PyTorch); see code/evaluation/extraction_bakeoff.md

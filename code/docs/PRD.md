@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Challenge | HackerRank Orchestrate, October 2026 — *Ghost Data Still Exists* |
-| Document status | Draft v0.11 — living document, updated at every major step |
+| Document status | Draft v0.12 — living document, updated at every major step |
 | Last updated | 2026-10-25 |
 | Sources of truth | `problem_statement.md`, `AGENTS.md` §6, `dataset/deletion_rules.csv`, `README.md` |
 
@@ -210,8 +210,9 @@ telemetry, marketing profiles, email delivery logs.
 - FR-4.1 Parse every evidence format into a common record model: SQL (via SQLite), JSON, logs, text, PDFs, images.
 - FR-4.2 Link records to the subject via identifiers, hashes, `customer_reference`/`user_id`, resource IDs and other grounded links — never via filename or manifest alone.
 - FR-4.3 Extract facts from images/PDFs once and cache them.
-- FR-4.4 Exclude evidence captured after `audit_at`.
-- **Status:** Not started.
+- FR-4.4 Respect time (C-TM-1/2): a file may be **cited** only if its manifest `captured_at` ≤ `audit_at`; a fact may be **used** (for linking and state) only if its own timestamp ≤ `audit_at`.
+- **Stage doc:** [`stages/stage_4_evidence_ingestion.md`](stages/stage_4_evidence_ingestion.md)
+- **Status:** **Kickoff** (2026-10-25) — design written: `Observation` + `Coverage` model, five generic readers, learned system-ID map, identifier linking with propagation and rejection of other people's records, Q9 activity rule, Q10 catalog rule, 4A bake-off (Claude vision feasibility passed; no PDF/OCR libraries installed); proposals P1–P7 awaiting agreement.
 
 #### 4A — Extraction bake-off: Docling vs Claude vision (run at the start of Stage 4)
 
@@ -359,8 +360,8 @@ evaluation/main.py ──► runs agent on samples ──► metrics + diffs
 | Q6 | Model tier per task | Haiku for intent, Sonnet for image extraction, … | **Intent: Haiku** (`claude-haiku-5-5`, 402/402, D12); image extraction open — Stage 4A |
 | Q7 | How can a grader without a Claude Code login re-run the agent? | Ship the LLM cache in `code.zip` / offline fallback backend / both | **Decided: ship the cache** (keyed by prompt version + model + text); verified offline run (D12) |
 | Q8 | Which `evidence_id` to cite when several items prove a step | Determined from sample patterns in Stage 0 | **Answered (Stage 0, C-SP-4):** per step, the file captured ≤ `audit_at` that shows that resource's state; activity rows are not cited |
-| Q9 | How to link cleaned records that carry no identifier (OQ-1: 16 of 111 sample resources) | Deletion-worker window + result matching `reported_status` (29/32) / exclusion of other people's resources / accept misses | Open — Stage 4 (needs evidence + activity; owner index from Stage 3 enables the exclusion option) |
-| Q10 | How to treat `LINK_RESOURCE_IDENTITY` activity (data-catalog claims linking a resource to a person) when evidence disagrees, e.g. `marketing_001` (F1-1) | Trust evidence identifiers only / accept the link when evidence does not contradict it | Open — Stage 3–4 |
+| Q9 | How to link cleaned records that carry no identifier (OQ-1: 16 of 111 sample resources) | Deletion-worker window + result matching `reported_status` (29/32) / exclusion of other people's resources / accept misses | **Decided (Stage 4, D13):** activity links only one primary account, only when the case has none yet (0 wrong on samples). Linking all unowned window resources gave 57 wrong of 75. Remaining cleaned records are accepted misses; ambiguity that only post-audit evidence could settle is left unresolved by rule |
+| Q10 | How to treat `LINK_RESOURCE_IDENTITY` activity (data-catalog claims linking a resource to a person) when evidence disagrees, e.g. `marketing_001` (F1-1) | Trust evidence identifiers only / accept the link when evidence does not contradict it | **Decided (Stage 4, D13):** accept unless the resource's evidence names someone else (`marketing_001` rejected); catalog display aliases (`export_1842 (NST-2026-0718-1842)`) pull in records showing the alias |
 
 ## 11. Decision Log
 
@@ -436,4 +437,5 @@ claude -p "<prompt>" --model haiku --output-format json --max-turns 1 \
 | 0.9 | 2026-10-25 | Stage 2 kickoff doc written |
 | 0.10 | 2026-10-25 | Stage 2 done (D12); Q6 answered for intent; Q7 decided |
 | 0.11 | 2026-10-25 | Stage 3 done; Q9 assigned to Stage 4 |
+| 0.12 | 2026-10-25 | Stage 4 kickoff doc written; FR-4.4 refined (cite vs use) |
 | 0.5 | 2026-10-24 | PRD analysis folded in: stage kickoff template (D9); carry-in notes for Stages 0, 1, 2, 6, 7; FR-7.3 replaced by strict sort (D10); step-chain table; NFR-2 corrected (no CLI temperature); Q7 reproducibility, Q8 citation rule; 4A timebox; change log reordered |

@@ -111,6 +111,14 @@ def intent_history_row(time: str, commit: str, label: str, result) -> str:
     return "| " + " | ".join(cells) + " |\n"
 
 
+def link_history_row(time: str, commit: str, label: str, suite: str, score) -> str:
+    """Link suite row: Status = resource recall, Step P/R/F1 column = resource precision / recall."""
+    cells = (time, commit, label.replace("|", "/"), suite, str(score.expected),
+             f"recall {pct(score.recall).strip()}", f"precision {pct(score.precision).strip()}", "—", "—", "—",
+             "—", "—")
+    return "| " + " | ".join(cells) + " |\n"
+
+
 def metrics_dict(result: Score, problems: list[str]) -> dict:
     return {
         "cases": result.cases,

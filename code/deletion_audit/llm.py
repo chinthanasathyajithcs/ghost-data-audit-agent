@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable, Protocol, Sequence
 
 CLI_TIMEOUT_S = 180
@@ -31,11 +32,17 @@ class CallUsage:
 class Backend(Protocol):
     def is_available(self) -> bool: ...
 
-    def complete_json(self, system_prompt: str, user_input: str, schema: dict, model: str) -> tuple[dict, CallUsage]: ...
+    def complete_json(
+        self, system_prompt: str, user_input: str, schema: dict, model: str, read_dirs: Sequence[Path] = ()
+    ) -> tuple[dict, CallUsage]: ...
 
 
 class ClaudeCliBackend:
-    """Runs `claude -p` with minimal context (no tools, MCP, settings or session) and a JSON schema."""
+    """Runs `claude -p` with minimal context (no MCP, settings or session) and a JSON schema.
+
+    No tools are allowed, except the read-only `Read` tool limited to `read_dirs` when a file
+    (screenshot or PDF) must be looked at.
+    """
 
     def __init__(
         self,
@@ -56,22 +63,27 @@ class ClaudeCliBackend:
     def is_available(self) -> bool:
         return self.which(self.executable) is not None
 
-    def command(self, system_prompt: str, schema: dict, model: str) -> list[str]:
+    def command(self, system_prompt: str, schema: dict, model: str, read_dirs: Sequence[Path | str] = ()) -> list[str]:
+        tools = ["--tools", "Read", "--allowed-tools", "Read"] if read_dirs else ["--tools", ""]
+        directories = [arg for d in read_dirs for arg in ("--add-dir", str(d))]
         return [
             self.executable, "-p",
             "--model", model,
             "--output-format", "json",
             "--json-schema", json.dumps(schema),
             "--system-prompt", system_prompt,
-            "--tools", "",
+            *tools,
+            *directories,
             "--strict-mcp-config",
             "--setting-sources", "",
             "--disable-slash-commands",
             "--no-session-persistence",
         ]
 
-    def complete_json(self, system_prompt: str, user_input: str, schema: dict, model: str) -> tuple[dict, CallUsage]:
-        command = self.command(system_prompt, schema, model)
+    def complete_json(
+        self, system_prompt: str, user_input: str, schema: dict, model: str, read_dirs: Sequence[Path] = ()
+    ) -> tuple[dict, CallUsage]:
+        command = self.command(system_prompt, schema, model, read_dirs)
         errors = []
         for attempt in range(len(self.retry_delays_s) + 1):
             if attempt:
