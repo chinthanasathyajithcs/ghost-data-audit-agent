@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import json
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Mapping
 
@@ -43,6 +44,11 @@ class Answer:
 
     status: str
     steps: tuple[dict, ...]
+
+
+def parse_time(value: str) -> datetime:
+    """Parse the dataset's ISO-8601 timestamps (with a trailing Z) into aware datetimes."""
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 def step_sort_key(step: Mapping) -> tuple:

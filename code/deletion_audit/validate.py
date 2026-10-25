@@ -14,14 +14,11 @@ from deletion_audit.contract import (
     PHASES,
     STATUSES,
     STEP_FIELDS,
+    parse_time,
     read_csv,
     read_csv_header,
     step_sort_key,
 )
-
-
-def parse_time(value: str) -> datetime:
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 def load_citation_times(dataset_dir: Path) -> dict[str, datetime]:

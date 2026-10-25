@@ -3,8 +3,9 @@
     python code/main.py [--requests dataset/deletion_requests.csv] [--output output.csv]
                         [--cases id1,id2] [--refresh-intent]
 
-Stage 2: requests that do not authorise deletion become NOT_APPLICABLE (LLM, cached). Deletion
-requests still get a stub decision (INCOMPLETE, no steps) until Stages 3–7 replace it.
+Stage 2: requests that do not authorise deletion become NOT_APPLICABLE (LLM, cached).
+Stage 3: each deletion request is resolved to its subject (every current and old identifier).
+Deletion requests still get a stub decision (INCOMPLETE, no steps) until Stages 4–7 replace it.
 """
 
 from __future__ import annotations
@@ -12,12 +13,22 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
 from deletion_audit.cache import CacheError, JsonCache
 from deletion_audit.config import INTENT_CACHE_FILE, LAST_RUN_USAGE_FILE, USAGE_LOG_FILE
-from deletion_audit.contract import DATASET_DIR, REPO_ROOT, Answer, read_csv, read_csv_header, write_answers
+from deletion_audit.contract import (
+    DATASET_DIR,
+    REPO_ROOT,
+    Answer,
+    parse_time,
+    read_csv,
+    read_csv_header,
+    write_answers,
+)
+from deletion_audit.identity import IdentityIndex, Subject
 from deletion_audit.intent import IntentClassifier, IntentError, IntentResult
 from deletion_audit.llm import ClaudeCliBackend
 from deletion_audit.usage import UsageRecorder
@@ -26,17 +37,43 @@ from deletion_audit.validate import load_citation_times, validate_rows
 MAX_PROBLEMS_SHOWN = 10
 
 
-def audit_case(request: dict, intent: IntentResult) -> Answer:
+@dataclass(frozen=True)
+class IdentityStats:
+    resolved: int = 0
+    via_old_email: int = 0
+    unresolved: list[str] = field(default_factory=list)
+
+    def describe(self) -> str:
+        text = f"identity: {self.resolved} deletion request(s) resolved ({self.via_old_email} via an old email)"
+        return text + (f"; unresolved: {', '.join(self.unresolved)}" if self.unresolved else "; 0 unresolved")
+
+
+def audit_case(request: dict, intent: IntentResult, subject: Subject | None) -> Answer:
     """Decide one case."""
     if not intent.authorizes_deletion:
         return Answer("NOT_APPLICABLE", ())
-    return Answer("INCOMPLETE", ())  # Stages 3–7 replace this stub
+    return Answer("INCOMPLETE", ())  # Stages 4–7 replace this stub; an unresolved subject links no records
 
 
-def audit_all(requests: list[dict], classifier: IntentClassifier, refresh_intent: bool = False) -> dict[str, Answer]:
-    """Classify every request text in one batched pass, then decide each case."""
+def audit_all(
+    requests: list[dict], classifier: IntentClassifier, identity: IdentityIndex, refresh_intent: bool = False
+) -> tuple[dict[str, Answer], IdentityStats]:
+    """Classify every request text in one batched pass, resolve each deletion request's subject, decide."""
     intents = classifier.classify_all([r["request_text"] for r in requests], refresh=refresh_intent)
-    return {r["case_id"]: audit_case(r, intents[r["request_text"]]) for r in requests}
+    answers, subjects = {}, {}
+    for r in requests:
+        intent = intents[r["request_text"]]
+        subject = identity.resolve(r["email"], parse_time(r["audit_at"])) if intent.authorizes_deletion else None
+        if intent.authorizes_deletion:
+            subjects[r["case_id"]] = subject
+        answers[r["case_id"]] = audit_case(r, intent, subject)
+    resolved = [s for s in subjects.values() if s is not None]
+    stats = IdentityStats(
+        resolved=len(resolved),
+        via_old_email=sum(s.matched_via == "historical" for s in resolved),
+        unresolved=sorted(c for c, s in subjects.items() if s is None),
+    )
+    return answers, stats
 
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -71,7 +108,8 @@ def main(argv: list[str] | None = None) -> int:
     usage = UsageRecorder(USAGE_LOG_FILE)
     try:
         classifier = IntentClassifier(ClaudeCliBackend(), JsonCache(INTENT_CACHE_FILE), usage=usage)
-        answers = audit_all(requests, classifier, refresh_intent=args.refresh_intent)
+        identity = IdentityIndex.from_dataset(DATASET_DIR)
+        answers, identity_stats = audit_all(requests, classifier, identity, refresh_intent=args.refresh_intent)
     except (IntentError, CacheError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
@@ -83,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"wrote {len(answers)} rows to {args.output}; format check: {len(problems)} problem(s)", file=sys.stderr)
     for problem in problems[:MAX_PROBLEMS_SHOWN]:
         print(f"  - {problem}", file=sys.stderr)
+    print(identity_stats.describe(), file=sys.stderr)
     print(usage.format_summary(classifier.cache_hits), file=sys.stderr)
     write_usage_summary(usage, len(requests), classifier.cache_hits)
     return 0

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Challenge | HackerRank Orchestrate, October 2026 — *Ghost Data Still Exists* |
-| Document status | Draft v0.10 — living document, updated at every major step |
+| Document status | Draft v0.11 — living document, updated at every major step |
 | Last updated | 2026-10-25 |
 | Sources of truth | `problem_statement.md`, `AGENTS.md` §6, `dataset/deletion_rules.csv`, `README.md` |
 
@@ -200,10 +200,11 @@ telemetry, marketing profiles, email delivery logs.
 
 ### Stage 3 — Identity resolution
 - FR-3.1 Map the request email (current **or historical**) to a `user_id`.
-- FR-3.2 Collect all current and historical emails, phones, names and email hashes from `user_identities.csv` + `user_audit_log.csv`.
+- FR-3.2 Collect all current and historical emails, phones and email hashes, plus `user_id`, from `user_identities.csv` + `user_audit_log.csv` (names are kept for reports but never used to match: C-ID-4).
 - FR-3.3 Respect time: identifiers are valid relative to `audit_at`.
-- FR-3.4 Avoid decoys (similar names/emails belonging to other users).
-- **Status:** Not started.
+- FR-3.4 Avoid decoys (similar names/emails belonging to other users); provide an owner index so Stage 4 can reject other people's records.
+- **Stage doc:** [`stages/stage_3_identity_resolution.md`](stages/stage_3_identity_resolution.md)
+- **Status:** **Done** (2026-10-25) — `IdentityIndex` + `Subject`; 508/508 eval deletion requests resolve (100 via an old email); whole-token matching with owner lookup; 843 of 850 users appear in the evidence, so decoy rejection matters in Stage 4. Q9/Q10 moved to Stage 4.
 
 ### Stage 4 — Evidence ingestion & search
 - FR-4.1 Parse every evidence format into a common record model: SQL (via SQLite), JSON, logs, text, PDFs, images.
@@ -358,7 +359,7 @@ evaluation/main.py ──► runs agent on samples ──► metrics + diffs
 | Q6 | Model tier per task | Haiku for intent, Sonnet for image extraction, … | **Intent: Haiku** (`claude-haiku-5-5`, 402/402, D12); image extraction open — Stage 4A |
 | Q7 | How can a grader without a Claude Code login re-run the agent? | Ship the LLM cache in `code.zip` / offline fallback backend / both | **Decided: ship the cache** (keyed by prompt version + model + text); verified offline run (D12) |
 | Q8 | Which `evidence_id` to cite when several items prove a step | Determined from sample patterns in Stage 0 | **Answered (Stage 0, C-SP-4):** per step, the file captured ≤ `audit_at` that shows that resource's state; activity rows are not cited |
-| Q9 | How to link cleaned records that carry no identifier (OQ-1: 16 of 111 sample resources) | Deletion-worker window + result matching `reported_status` (29/32) / exclusion of other people's resources / accept misses | Open — Stage 3–4 |
+| Q9 | How to link cleaned records that carry no identifier (OQ-1: 16 of 111 sample resources) | Deletion-worker window + result matching `reported_status` (29/32) / exclusion of other people's resources / accept misses | Open — Stage 4 (needs evidence + activity; owner index from Stage 3 enables the exclusion option) |
 | Q10 | How to treat `LINK_RESOURCE_IDENTITY` activity (data-catalog claims linking a resource to a person) when evidence disagrees, e.g. `marketing_001` (F1-1) | Trust evidence identifiers only / accept the link when evidence does not contradict it | Open — Stage 3–4 |
 
 ## 11. Decision Log
@@ -434,4 +435,5 @@ claude -p "<prompt>" --model haiku --output-format json --max-turns 1 \
 | 0.8 | 2026-10-25 | Stage 1 done (D11); Q10 added (identity-link claims) |
 | 0.9 | 2026-10-25 | Stage 2 kickoff doc written |
 | 0.10 | 2026-10-25 | Stage 2 done (D12); Q6 answered for intent; Q7 decided |
+| 0.11 | 2026-10-25 | Stage 3 done; Q9 assigned to Stage 4 |
 | 0.5 | 2026-10-24 | PRD analysis folded in: stage kickoff template (D9); carry-in notes for Stages 0, 1, 2, 6, 7; FR-7.3 replaced by strict sort (D10); step-chain table; NFR-2 corrected (no CLI temperature); Q7 reproducibility, Q8 citation rule; 4A timebox; change log reordered |
