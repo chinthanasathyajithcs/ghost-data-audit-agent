@@ -25,8 +25,9 @@ def classify_cases(case_files: Mapping[str, CaseFile | None], classifier: Catego
 def case_decisions(case_file: CaseFile, store: EvidenceStore, audit_at: datetime,
                    categories: Mapping[str, tuple[str, str]], rules: Mapping[str, Rule]) -> list[Decision]:
     decisions = []
+    subject_files = {o.evidence_id for r in case_file.resources for o in r.observations}
     for r in case_file.resources:
-        state = resolve_state(r, store.coverage, audit_at, store.files_by_resource)
+        state = resolve_state(r, store.coverage, audit_at, store.files_by_resource, subject_files)
         category, _ = categories[f"{case_file.case_id}/{r.resource_id}"]
         decisions.append(decide(state, category, rules, audit_at, r.observations))
     return decisions

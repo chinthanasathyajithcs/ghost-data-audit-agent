@@ -3,7 +3,7 @@
 import importlib.util
 import sys
 
-from conftest import CODE_DIR
+from conftest import CODE_DIR, REPO_ROOT
 
 from deletion_audit.evidence import EvidenceStore
 from deletion_audit.identity import IdentityIndex
@@ -39,6 +39,16 @@ IDENTITY = IdentityIndex(
 STORE = EvidenceStore.build([], [], IDENTITY, [])
 
 
+class FakeCategorizer:
+    def classify(self, resources, systems=None):
+        return {key: ("USER_PROFILE", "label") for key in resources}
+
+
+from deletion_audit.policy import load_rules  # noqa: E402
+
+RULES = load_rules(REPO_ROOT / "dataset")
+
+
 def request(case_id, text, email="x@example.com"):
     return {"case_id": case_id, "email": email, "request_text": text, "requested_at": "2026-08-01T00:00:00Z",
             "reported_status": "NOT_STARTED", "reported_at": "2026-08-02T00:00:00Z", "audit_at": "2026-09-01T00:00:00Z"}
@@ -47,17 +57,17 @@ def request(case_id, text, email="x@example.com"):
 def test_non_deletion_request_is_not_applicable_with_no_steps():
     classifier = FakeClassifier({"copy please": ACCESS, "delete please": DELETION})
 
-    answers, _, _ = agent.audit_all([request("c1", "copy please"), request("c2", "delete please")], classifier, IDENTITY, STORE)
+    answers, _, _, _ = agent.audit_all([request("c1", "copy please"), request("c2", "delete please")], classifier, IDENTITY, STORE, FakeCategorizer(), RULES)
 
     assert answers["c1"].status == "NOT_APPLICABLE"
     assert answers["c1"].steps == ()
-    assert answers["c2"].status != "NOT_APPLICABLE"
+    assert answers["c2"].status == "COMPLETE"  # deletion request, but nothing remaining was found
 
 
 def test_all_texts_are_classified_in_one_pass_before_the_case_loop():
     classifier = FakeClassifier({"a": DELETION, "b": ACCESS})
 
-    agent.audit_all([request("c1", "a"), request("c2", "b"), request("c3", "a")], classifier, IDENTITY, STORE)
+    agent.audit_all([request("c1", "a"), request("c2", "b"), request("c3", "a")], classifier, IDENTITY, STORE, FakeCategorizer(), RULES)
 
     assert len(classifier.batches) == 1
 
@@ -67,7 +77,7 @@ def test_deletion_requests_are_resolved_to_subjects_and_counted():
     requests = [request("c1", "delete"), request("c2", "delete", "OLD.X@example.com"),
                 request("c3", "delete", "nobody@example.com"), request("c4", "copy")]
 
-    _, stats, case_files = agent.audit_all(requests, classifier, IDENTITY, STORE)
+    _, stats, case_files, _ = agent.audit_all(requests, classifier, IDENTITY, STORE, FakeCategorizer(), RULES)
 
     assert (stats.resolved, stats.via_old_email, stats.unresolved) == (2, 1, ["c3"])
     assert set(case_files) == {"c1", "c2", "c3"}

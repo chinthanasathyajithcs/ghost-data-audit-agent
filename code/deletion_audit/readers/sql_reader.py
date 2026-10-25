@@ -32,21 +32,21 @@ def read_sql(path: Path, evidence_id: str, captured_at: str) -> tuple[list[Obser
     finally:
         connection.close()
 
-    coverage = [Coverage(evidence_id, r["captured_at"], SCOPE_TABLE, None, r["origin_system"])
+    coverage = [Coverage(evidence_id, r["captured_at"], SCOPE_TABLE, None, r["origin_system"], captured_at)
                 for r in rows.pop(SCOPE_TABLE, [])]
     observations = []
     for table, table_rows in rows.items():
-        coverage += _table_coverage(evidence_id, snapshot_time, table, table_rows)
+        coverage += _table_coverage(evidence_id, snapshot_time, table, table_rows, captured_at)
         observations += [_observation(evidence_id, captured_at, snapshot_time, table, row)
                          for row in table_rows if row.get("resource_id")]
     return observations, coverage
 
 
-def _table_coverage(evidence_id: str, time: str, table: str, rows: list[dict]) -> list[Coverage]:
+def _table_coverage(evidence_id: str, time: str, table: str, rows: list[dict], file_time: str) -> list[Coverage]:
     pairs = {(r.get("origin_system"), r.get("collection_name")) for r in rows if r.get("origin_system")}
     if pairs:
-        return [Coverage(evidence_id, time, table, label, system) for system, label in sorted(pairs)]
-    return [Coverage(evidence_id, time, table, table_label(table), None)]
+        return [Coverage(evidence_id, time, table, label, system, file_time) for system, label in sorted(pairs)]
+    return [Coverage(evidence_id, time, table, table_label(table), None, file_time)]
 
 
 def _observation(evidence_id: str, captured_at: str, snapshot_time: str, table: str, row: dict) -> Observation:

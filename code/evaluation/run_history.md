@@ -22,3 +22,6 @@ One row per full-suite run of `code/evaluation/main.py`. Metric definitions: `co
 | 2026-10-25 11:22 | e041266+dirty | stage 5: state at audit_at (signals, latest-wins, any-copy, coverage absence, cache-noise filter) | states:custom | 12 | state 100.0% | proof 100.0% | — | — | — | — | — |
 | 2026-10-25 12:00 | c28c0ad+dirty | stage 6: categories (labels + Haiku over de-identified signatures) + decision table | decisions:samples | 93 | exact 100.0% | finding cites 100.0% | — | — | — | — | 0 review(s) |
 | 2026-10-25 12:00 | c28c0ad+dirty | stage 6: categories (labels + Haiku over de-identified signatures) + decision table | decisions:custom | 12 | exact 100.0% | finding cites 100.0% | — | — | — | — | 0 review(s) |
+| 2026-10-25 12:08 | e4b2344+dirty | stage 7: first full agent (decisions -> steps) | samples | 32 | 100.0% | 100.0% / 90.7% / 95.1% | 88.7% | 56.2% | 87.4% | 18/32 | 0 |
+| 2026-10-25 12:08 | e4b2344+dirty | stage 7: first full agent (decisions -> steps) | custom | 8 | 100.0% | 100.0% / 90.9% / 95.2% | 89.6% | 75.0% | 94.4% | 6/8 | 0 |
+| 2026-10-25 12:08 | e4b2344+dirty | stage 7: first full agent (decisions -> steps) | all | 40 | 100.0% | 100.0% / 90.7% / 95.1% | 88.8% | 60.0% | 88.8% | 24/40 | 0 |

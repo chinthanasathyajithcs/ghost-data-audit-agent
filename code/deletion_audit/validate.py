@@ -126,8 +126,8 @@ def _status_errors(case_id: str, status: str, steps: list[dict]) -> list[str]:
     phases = {s["phase"] for s in steps}
     if status == "NOT_APPLICABLE":
         return [] if not steps else [f"{case_id}: NOT_APPLICABLE must have steps_json=[]"]
-    if status == "COMPLETE":
-        errors = [] if steps else [f"{case_id}: COMPLETE needs at least one verification step"]
+    if status == "COMPLETE":  # may be empty: nothing remaining was found for the subject
+        errors = []
         if phases - {"VERIFICATION"}:
             errors.append(f"{case_id}: COMPLETE may contain only VERIFICATION steps")
         if any(not s["evidence_id"] for s in steps):

@@ -9,8 +9,8 @@ Stage 4: all evidence is read (screenshots and PDFs through the cached extractor
 request gets a case file of the subject's resources.
 Stage 5: each resource's state at audit_at (existence, identity, flow, restore) with the file proving it.
 Stage 6: each resource's data category (evidence label, else LLM over a de-identified signature) and the
-policy decision (finding / remediation / verification). Deletion requests still get a stub decision
-(INCOMPLETE, no steps) until Stage 7 turns decisions into steps.
+policy decision (finding / remediation / verification).
+Stage 7: decisions become the case answer (status and ordered, cited steps) written to output.csv.
 """
 
 from __future__ import annotations
@@ -46,12 +46,13 @@ from deletion_audit.decisions import case_decisions, classify_cases
 from deletion_audit.evidence import EvidenceStore
 from deletion_audit.extraction import DocumentExtractor, ExtractionError
 from deletion_audit.identity import IdentityIndex
-from deletion_audit.intent import IntentClassifier, IntentError, IntentResult
+from deletion_audit.intent import IntentClassifier, IntentError
 from deletion_audit.linking import CaseFile, build_case_file
 from deletion_audit.llm import ClaudeCliBackend
 from deletion_audit.policy import Rule, load_rules
 from deletion_audit.readers import document_reader
 from deletion_audit.state import resolve_state
+from deletion_audit.steps import build_answer
 from deletion_audit.usage import UsageRecorder
 from deletion_audit.validate import load_citation_times, validate_rows
 
@@ -69,41 +70,43 @@ class IdentityStats:
         return text + (f"; unresolved: {', '.join(self.unresolved)}" if self.unresolved else "; 0 unresolved")
 
 
-def audit_case(request: dict, intent: IntentResult, case_file: CaseFile | None) -> Answer:
-    """Decide one case."""
-    if not intent.authorizes_deletion:
-        return Answer("NOT_APPLICABLE", ())
-    return Answer("INCOMPLETE", ())  # Stages 5–7 replace this stub; no case file means no linked records
-
-
 def audit_all(
     requests: list[dict],
     classifier: IntentClassifier,
     identity: IdentityIndex,
     store: EvidenceStore,
+    categorizer: CategoryClassifier,
+    rules: dict[str, Rule],
     refresh_intent: bool = False,
-) -> tuple[dict[str, Answer], IdentityStats, dict[str, CaseFile | None]]:
-    """Classify every request in one batched pass, then resolve the subject, build the case file, decide."""
+) -> tuple[dict[str, Answer], IdentityStats, dict[str, CaseFile | None], dict]:
+    """Stage 2 intent for every request (one batched pass); for deletion requests the subject (3), case file
+    (4), one batched category pass (6), then states, decisions (5–6) and the answer (7)."""
     intents = classifier.classify_all([r["request_text"] for r in requests], refresh=refresh_intent)
-    answers, case_files = {}, {}
+    audit_times = {r["case_id"]: parse_time(r["audit_at"]) for r in requests}
+    case_files: dict[str, CaseFile | None] = {}
     for r in requests:
-        intent = intents[r["request_text"]]
-        case_file = None
-        if intent.authorizes_deletion:
-            audit_at = parse_time(r["audit_at"])
-            subject = identity.resolve(r["email"], audit_at)
-            if subject is not None:
-                case_file = build_case_file(r["case_id"], subject, parse_time(r["requested_at"]), audit_at,
-                                            parse_time(r["reported_at"]), r["reported_status"], store)
-            case_files[r["case_id"]] = case_file
-        answers[r["case_id"]] = audit_case(r, intent, case_file)
+        if intents[r["request_text"]].authorizes_deletion:
+            subject = identity.resolve(r["email"], audit_times[r["case_id"]])
+            case_files[r["case_id"]] = None if subject is None else build_case_file(
+                r["case_id"], subject, parse_time(r["requested_at"]), audit_times[r["case_id"]],
+                parse_time(r["reported_at"]), r["reported_status"], store)
+    categories = classify_cases(case_files, categorizer)
+    answers = {}
+    for r in requests:
+        case_id = r["case_id"]
+        if case_id not in case_files:
+            answers[case_id] = Answer("NOT_APPLICABLE", ())
+            continue
+        case_file = case_files[case_id]  # no subject or no linked records: nothing remaining was found
+        decisions = case_decisions(case_file, store, audit_times[case_id], categories, rules) if case_file else []
+        answers[case_id] = build_answer(decisions)
     resolved = [c.subject for c in case_files.values() if c is not None]
     stats = IdentityStats(
         resolved=len(resolved),
         via_old_email=sum(s.matched_via == "historical" for s in resolved),
         unresolved=sorted(c for c, f in case_files.items() if f is None),
     )
-    return answers, stats, case_files
+    return answers, stats, case_files, categories
 
 
 def explain(case_file: CaseFile, store: EvidenceStore, audit_at: datetime, categories: dict,
@@ -114,7 +117,8 @@ def explain(case_file: CaseFile, store: EvidenceStore, audit_at: datetime, categ
     decisions = {d.resource_id: d for d in case_decisions(case_file, store, audit_at, categories, rules)}
     for r in case_file.resources:
         cited = sorted({o.evidence_id for o in r.observations})
-        state = resolve_state(r, store.coverage, audit_at, store.files_by_resource)
+        state = resolve_state(r, store.coverage, audit_at, store.files_by_resource,
+                              {o.evidence_id for x in case_file.resources for o in x.observations})
         facets = ", ".join(f"{name}={facet.value}@{facet.proof or '-'}" for name in ("existence", "identity", "flow",
                                                                                    "restore")
                            if (facet := getattr(state, name)) is not None)
@@ -165,11 +169,10 @@ def main(argv: list[str] | None = None) -> int:
         extractor = DocumentExtractor(backend, JsonCache(EXTRACTION_CACHE_FILE), EXTRACTION_MODEL, usage=usage)
         identity = IdentityIndex.from_dataset(DATASET_DIR)
         store = EvidenceStore.load(DATASET_DIR, identity, document_reader(extractor))
-        answers, identity_stats, case_files = audit_all(requests, classifier, identity, store,
-                                                        refresh_intent=args.refresh_intent)
         rules = load_rules(DATASET_DIR)
         categorizer = CategoryClassifier(backend, JsonCache(CATEGORY_CACHE_FILE), CATEGORY_MODEL, rules, usage=usage)
-        categories = classify_cases(case_files, categorizer)
+        answers, identity_stats, case_files, categories = audit_all(
+            requests, classifier, identity, store, categorizer, rules, refresh_intent=args.refresh_intent)
     except (IntentError, ExtractionError, CategoryError, CacheError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2

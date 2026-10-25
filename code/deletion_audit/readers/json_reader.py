@@ -60,7 +60,7 @@ def _walk(node, ctx: _Context, evidence_id: str, captured_at: str, out: list, co
         return
     if isinstance(node.get("records"), list) and (ctx.system or ctx.label):
         coverage.append(Coverage(evidence_id, ctx.time, f"{ctx.system or ''}/{ctx.label or ''}", ctx.label,
-                                 ctx.system))
+                                 ctx.system, captured_at))
     for key, value in node.items():
         if key == SYSTEM_CONTAINER and isinstance(value, dict):
             _walk_systems(value, ctx, evidence_id, captured_at, out, coverage)
@@ -74,7 +74,7 @@ def _walk_systems(systems: dict, ctx: _Context, evidence_id: str, captured_at: s
             continue
         for collection, items in collections.items():
             inner = replace(ctx, system=system, label=collection, path=f"{SYSTEM_CONTAINER}.{system}.{collection}")
-            coverage.append(Coverage(evidence_id, ctx.time, f"{system}/{collection}", collection, system))
+            coverage.append(Coverage(evidence_id, ctx.time, f"{system}/{collection}", collection, system, captured_at))
             _walk(items, inner, evidence_id, captured_at, out, coverage)
 
 

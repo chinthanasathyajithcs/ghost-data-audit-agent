@@ -170,3 +170,27 @@ def test_configured_mode_never_overrides_the_enabled_flag():
     disabled = obs({"customer_email": "a@b.c", "mode": "continuous_sync", "enabled": False})
 
     assert read_signals(disabled)["flow"] == "disabled"
+
+
+def test_a_later_capture_of_the_subjects_data_without_the_record_overrides_an_earlier_present():
+    earlier = obs({"email": "a@b.c"}, observed="2026-08-11T10:00:00Z", captured="2026-08-11T10:00:00Z",
+                  evidence="evidence_5")
+    later = Coverage("evidence_87", "2026-08-17T09:42:50Z", "customer_profiles", "customer_profiles", "sys",
+                     "2026-08-17T09:42:50Z")
+    random_slice = Coverage("evidence_70", "2026-08-16T00:00:00Z", "customer_profiles", "customer_profiles", "sys",
+                            "2026-08-16T00:00:00Z")
+
+    about_subject = resolve_state(resource(earlier), [later], AUDIT_AT, {}, subject_files={"evidence_87"})
+    unrelated = resolve_state(resource(earlier), [random_slice], AUDIT_AT, {}, subject_files={"evidence_87"})
+
+    assert (about_subject.existence.value, about_subject.existence.proof) == ("absent", "evidence_87")
+    assert unrelated.existence.value == "present"
+
+
+def test_coverage_is_cited_only_when_its_file_was_captured_by_audit_at():
+    inner_time_ok_file_late = Coverage("evidence_17", "2026-09-10T00:00:00Z", "t", "customer_profiles", "sys",
+                                       "2026-09-20T00:00:00Z")
+
+    state = resolve_state(resource(), [inner_time_ok_file_late], AUDIT_AT, {})
+
+    assert state.existence is None

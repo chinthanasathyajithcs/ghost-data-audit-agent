@@ -34,6 +34,7 @@ class Coverage:
     location: str
     label: str | None
     system_id: str | None
+    file_captured_at: str = ""  # manifest time of the file: decides whether the snapshot may be cited
 
 
 def is_resource_id(value: object) -> bool:

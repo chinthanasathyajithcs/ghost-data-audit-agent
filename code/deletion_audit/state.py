@@ -177,12 +177,18 @@ def _decide(facet: str, observations: Iterable[Observation], audit_at: datetime)
     return Facet(value, latest, proof.evidence_id if proof else None, "observation")
 
 
+def _covering(resource: LinkedResource, coverage: list[Coverage], audit_at: datetime,
+              present_in: Mapping[str, set[str]]) -> list[Coverage]:
+    """Citable snapshots (file captured by audit_at) that cover the resource's system but hold no row for it."""
+    seen = present_in.get(resource.resource_id, set())
+    return [c for c in coverage if c.system_id == resource.system_id and c.evidence_id not in seen
+            and parse_time(c.captured_at) <= audit_at and parse_time(c.file_captured_at or c.captured_at) <= audit_at]
+
+
 def _absence_from_coverage(resource: LinkedResource, coverage: list[Coverage], audit_at: datetime,
                            present_in: Mapping[str, set[str]]) -> Facet | None:
     """A covering snapshot (captured by audit_at) with no row for the resource proves it absent."""
-    seen = present_in.get(resource.resource_id, set())
-    covering = [c for c in coverage if c.system_id == resource.system_id and c.evidence_id not in seen
-                and parse_time(c.captured_at) <= audit_at]
+    covering = _covering(resource, coverage, audit_at, present_in)
     if not covering:
         return None
     latest = max(covering, key=lambda c: (c.captured_at, c.evidence_id))
@@ -190,10 +196,19 @@ def _absence_from_coverage(resource: LinkedResource, coverage: list[Coverage], a
 
 
 def resolve_state(resource: LinkedResource, coverage: list[Coverage], audit_at: datetime,
-                  present_in: Mapping[str, set[str]]) -> ResourceState:
-    """`resource.observations` are already limited to observed_at <= audit_at (Stage 4)."""
+                  present_in: Mapping[str, set[str]], subject_files: frozenset[str] | set[str] = frozenset()
+                  ) -> ResourceState:
+    """`resource.observations` are already limited to observed_at <= audit_at (Stage 4). `subject_files` are the
+    evidence files holding the subject's linked records: a later one that covers this resource's system but has
+    no row for it is a capture of the subject's data, so it shows the record was gone by then."""
     facets = {facet: _decide(facet, resource.observations, audit_at) for facet in FACETS}
     existence = facets["existence"]
+    if existence is not None and existence.value == "present":
+        later = [c for c in _covering(resource, coverage, audit_at, present_in)
+                 if c.evidence_id in subject_files and c.captured_at > existence.as_of]
+        if later:
+            latest = max(later, key=lambda c: (c.captured_at, c.evidence_id))
+            facets["existence"] = existence = Facet("absent", latest.captured_at, latest.evidence_id, "coverage")
     if existence is None:
         facets["existence"] = _absence_from_coverage(resource, coverage, audit_at, present_in)
     elif existence.value == "absent" and existence.proof is None:

@@ -66,7 +66,9 @@ def case_states(request: dict, store: EvidenceStore, identity: IdentityIndex,
     subject = identity.resolve(request["email"], audit_at)
     case = build_case_file(request["case_id"], subject, parse_time(request["requested_at"]), audit_at,
                            parse_time(request["reported_at"]), request["reported_status"], store)
-    return audit_at, {r.resource_id: resolve_state(r, store.coverage, audit_at, present_in) for r in case.resources}
+    subject_files = {o.evidence_id for r in case.resources for o in r.observations}
+    return audit_at, {r.resource_id: resolve_state(r, store.coverage, audit_at, present_in, subject_files)
+                      for r in case.resources}
 
 
 def run_state_suite(suites: dict, store: EvidenceStore, identity: IdentityIndex, load_answers) -> dict[str, StateScore]:

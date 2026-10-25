@@ -306,7 +306,8 @@ extractors, never by the agent.
 
   - Records retained by policy appear **only** as `VERIFY_RECORD_PRESENT` (24 in the samples), with no finding or remediation.
   - Already-compliant resources in an INCOMPLETE case still get a verification step (77 verifications vs. 41 remediations) — confirm the exact rule at kickoff.
-- **Status:** Not started.
+- **Stage doc:** [`stages/stage_7_steps_and_output.md`](stages/stage_7_steps_and_output.md)
+- **Status:** **Done** (2026-10-25) — full agent writes a valid 518-row `output.csv` (0 format problems). Samples: status 32/32, step precision 100%, recall 90.7%, F1 95.1%, 18/32 fully correct; custom 8/8 status. Remaining misses are the 18 unlinkable cleaned resources. Two first-run bugs fixed (coverage citation by file date; later capture of the subject's data proves absence).
 
 ### Stage 8 — Iterate, full run, reports, package
 - FR-8.1 Iterate on failures until sample scores plateau; record each failure and fix.
