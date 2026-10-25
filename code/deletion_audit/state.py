@@ -7,6 +7,7 @@ restore (open/blocked). Each facet keeps the citable file that proves it.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Iterable, Mapping
@@ -19,7 +20,10 @@ from deletion_audit.observations import Coverage, Observation
 FACETS = ("existence", "identity", "flow", "restore")
 STATE_FIELDS = ("state", "result")  # explicit states in handovers, record-lookup logs and ledgers
 DIRECT_IDENTIFIERS = {"email", "phone", "full_name", "display_name", "name", "email_hash", "requester_email",
-                      "requester_name", "requester_phone", "owner_email", "owner_phone", "customer_email"}
+                      "requester_name", "requester_phone", "owner_email", "owner_phone", "customer_email", "customer"}
+ACTIVE_MODE = re.compile(r"continuous|enabled|running|active", re.I)
+STOPPED_MODE = re.compile(r"paused|disabled|stopped|inactive|off\b", re.I)
+LOADED_EVENT = re.compile(r"(?:_loaded|_read_completed|_found)$")
 REFERENCES = {"customer_reference", "subject_reference", "user_id"}
 NESTED = ("document", "profile")
 FREE_TEXT = ("message_text", "message_excerpt")
@@ -75,10 +79,12 @@ def _explicit_state(word: str, label: str | None) -> dict[str, str]:
 
 
 def _identity(fields: Mapping) -> str | None:
-    flat = dict(fields)
+    flat = {}
+    for key, value in fields.items():
+        flat[key.lower().replace(" ", "_")] = value  # screens and documents label fields "Email", "Customer"
     for key in NESTED:
-        if isinstance(fields.get(key), dict):
-            flat.update(fields[key])
+        if isinstance(flat.get(key), dict):
+            flat.update({k.lower(): v for k, v in flat[key].items()})
     if any(not _empty(fields.get(k)) and EMAIL_TOKEN.search(str(fields[k])) for k in FREE_TEXT):
         return "identifiable"
     direct = [flat[k] for k in DIRECT_IDENTIFIERS if k in flat]
@@ -119,9 +125,17 @@ def read_signals(o: Observation) -> dict[str, str]:
         if _truth(f.get(key)) is not None:
             put("existence", "present" if _truth(f[key]) else "absent")
 
+    if LOADED_EVENT.search(_text(f.get("event", ""))) and _text(f.get("access", "allowed")) != "denied":
+        put("existence", "present")
     for key in ("enabled", "scheduler_registered"):
         if _truth(f.get(key)) is not None:
             put("flow", "active" if _truth(f[key]) else "disabled")
+    for key, value in f.items():  # only without an enabled flag: admin screens: "Mode: Continuous", "Sync mode: Paused"
+        if "mode" in key.lower() and isinstance(value, str):
+            if STOPPED_MODE.search(value):
+                put("flow", "disabled")
+            elif ACTIVE_MODE.search(value):
+                put("flow", "active")
     if _truth(f.get("restore_allowed")) is not None:
         put("restore", "open" if _truth(f["restore_allowed"]) else "blocked")
     if _truth(f.get("deletion_block")) is True or _text(f.get("decision", "")) == "deny":

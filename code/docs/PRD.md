@@ -285,7 +285,8 @@ extractors, never by the agent.
 - FR-6.3 Account tombstone: keep the stable `user_id`, require removal of direct identifiers.
 - FR-6.4 Decide `COMPLETE` only when every copy has the required treatment, retained records remain available, and no active sync/import/restore path exists.
 - **Carry-in notes:** the resource → category mapping (FR-6.1) is the core of the agent and the likeliest place for a hardcoding violation; it must use what Stage 0 finds about category-bearing fields.
-- **Status:** Not started.
+- **Stage doc:** [`stages/stage_6_policy_engine.md`](stages/stage_6_policy_engine.md)
+- **Status:** **Done** (2026-10-25) — category from explicit evidence labels, else Haiku over a de-identified evidence signature against the CSV policy (cached, shipped); decision table per action and state. Samples 93/93 exact decisions, 41/41 finding citations; 0 reviews on 1,542 eval resources. H-PL-7/OQ-6 resolved (contact records → SECONDARY_IDENTIFIER).
 
 ### Stage 7 — Step builder & output writer
 - FR-7.1 `INCOMPLETE`: findings (cited) → remediation → verification (empty evidence).
@@ -358,7 +359,7 @@ evaluation/main.py ──► runs agent on samples ──► metrics + diffs
 | Q3 | Request intent | LLM / keyword rules / rules with LLM fallback | **Decided: LLM, cached** (D7) |
 | Q4 | Images & PDFs | Docling (local OCR + layout) / Claude vision / plain PDF text library | **Proposed: Docling for PDFs + screenshots; Claude vision as fallback — confirm with a bake-off on 2–3 screenshots** (D8, revised) |
 | Q5 | Fully agentic vs hybrid pipeline | Hybrid / fully agentic | **Decided: Hybrid** (D5) |
-| Q6 | Model tier per task | Haiku for intent, Sonnet for image extraction, … | **Intent: Haiku** (`claude-haiku-5-5`, 402/402, D12); image extraction open — Stage 4A |
+| Q6 | Model tier per task | Haiku for intent, Sonnet for image extraction, … | **Decided: Haiku for all three tasks** — intent (402/402, D12), extraction (63/63, D8), categories (93/93, Stage 6) |
 | Q7 | How can a grader without a Claude Code login re-run the agent? | Ship the LLM cache in `code.zip` / offline fallback backend / both | **Decided: ship the cache** (keyed by prompt version + model + text); verified offline run (D12) |
 | Q8 | Which `evidence_id` to cite when several items prove a step | Determined from sample patterns in Stage 0 | **Answered (Stage 0, C-SP-4):** per step, the file captured ≤ `audit_at` that shows that resource's state; activity rows are not cited |
 | Q9 | How to link cleaned records that carry no identifier (OQ-1: 16 of 111 sample resources) | Deletion-worker window + result matching `reported_status` (29/32) / exclusion of other people's resources / accept misses | **Decided (Stage 4, D13):** activity links only one primary account, only when the case has none yet (0 wrong on samples). Linking all unowned window resources gave 57 wrong of 75. Remaining cleaned records are accepted misses; ambiguity that only post-audit evidence could settle is left unresolved by rule |

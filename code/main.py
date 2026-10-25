@@ -8,7 +8,9 @@ Stage 3: each deletion request is resolved to its subject (every current and old
 Stage 4: all evidence is read (screenshots and PDFs through the cached extractor) and each deletion
 request gets a case file of the subject's resources.
 Stage 5: each resource's state at audit_at (existence, identity, flow, restore) with the file proving it.
-Deletion requests still get a stub decision (INCOMPLETE, no steps) until Stages 6–7 replace it.
+Stage 6: each resource's data category (evidence label, else LLM over a de-identified signature) and the
+policy decision (finding / remediation / verification). Deletion requests still get a stub decision
+(INCOMPLETE, no steps) until Stage 7 turns decisions into steps.
 """
 
 from __future__ import annotations
@@ -21,7 +23,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from deletion_audit.cache import CacheError, JsonCache
+from deletion_audit.category import CategoryClassifier, CategoryError
 from deletion_audit.config import (
+    CATEGORY_CACHE_FILE,
+    CATEGORY_MODEL,
     EXTRACTION_CACHE_FILE,
     EXTRACTION_MODEL,
     INTENT_CACHE_FILE,
@@ -37,12 +42,14 @@ from deletion_audit.contract import (
     read_csv_header,
     write_answers,
 )
+from deletion_audit.decisions import case_decisions, classify_cases
 from deletion_audit.evidence import EvidenceStore
 from deletion_audit.extraction import DocumentExtractor, ExtractionError
 from deletion_audit.identity import IdentityIndex
 from deletion_audit.intent import IntentClassifier, IntentError, IntentResult
 from deletion_audit.linking import CaseFile, build_case_file
 from deletion_audit.llm import ClaudeCliBackend
+from deletion_audit.policy import Rule, load_rules
 from deletion_audit.readers import document_reader
 from deletion_audit.state import resolve_state
 from deletion_audit.usage import UsageRecorder
@@ -99,10 +106,12 @@ def audit_all(
     return answers, stats, case_files
 
 
-def explain(case_file: CaseFile, store: EvidenceStore, audit_at: datetime) -> str:
+def explain(case_file: CaseFile, store: EvidenceStore, audit_at: datetime, categories: dict,
+            rules: dict[str, Rule]) -> str:
     s = case_file.subject
     lines = [f"--- {case_file.case_id}: {s.user_id} ({s.name}), request email {s.request_email} ({s.matched_via})",
              f"    {len(case_file.resources)} resource(s); {case_file.rejected} other people's resource(s) rejected"]
+    decisions = {d.resource_id: d for d in case_decisions(case_file, store, audit_at, categories, rules)}
     for r in case_file.resources:
         cited = sorted({o.evidence_id for o in r.observations})
         state = resolve_state(r, store.coverage, audit_at, store.files_by_resource)
@@ -111,6 +120,9 @@ def explain(case_file: CaseFile, store: EvidenceStore, audit_at: datetime) -> st
                            if (facet := getattr(state, name)) is not None)
         lines.append(f"    {r.system_id or '?'}/{r.resource_id}  [{'+'.join(sorted(r.methods))}]  "
                      f"{len(r.observations)} observation(s) in {', '.join(cited) or 'activity only'}  → {facets}")
+        d = decisions[r.resource_id]
+        ops = " → ".join(op for op in (d.finding, d.remediation, d.verification) if op)
+        lines.append(f"        {d.category} ({d.rule_id or 'no rule'}): {ops or 'review: ' + str(d.needs_review)}")
     if case_file.conflicts:
         lines.append(f"    catalog links contradicted by evidence: {', '.join(case_file.conflicts)}")
     return "\n".join(lines)
@@ -155,7 +167,10 @@ def main(argv: list[str] | None = None) -> int:
         store = EvidenceStore.load(DATASET_DIR, identity, document_reader(extractor))
         answers, identity_stats, case_files = audit_all(requests, classifier, identity, store,
                                                         refresh_intent=args.refresh_intent)
-    except (IntentError, ExtractionError, CacheError) as error:
+        rules = load_rules(DATASET_DIR)
+        categorizer = CategoryClassifier(backend, JsonCache(CATEGORY_CACHE_FILE), CATEGORY_MODEL, rules, usage=usage)
+        categories = classify_cases(case_files, categorizer)
+    except (IntentError, ExtractionError, CategoryError, CacheError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     write_answers(args.output, answers)
@@ -169,13 +184,13 @@ def main(argv: list[str] | None = None) -> int:
     print(f"evidence: {len(store.observations)} observations, {len(store.coverage)} coverage entries, "
           f"{len(store.skipped)} file(s) skipped", file=sys.stderr)
     print(identity_stats.describe(), file=sys.stderr)
-    print(usage.format_summary(classifier.cache_hits + extractor.cache_hits), file=sys.stderr)
+    print(usage.format_summary(classifier.cache_hits + extractor.cache_hits + categorizer.cache_hits), file=sys.stderr)
     write_usage_summary(usage, len(requests), classifier.cache_hits)
     if args.explain:
         audit_times = {r["case_id"]: parse_time(r["audit_at"]) for r in requests}
         for case_id, case_file in case_files.items():
             if case_file is not None:
-                print(explain(case_file, store, audit_times[case_id]))
+                print(explain(case_file, store, audit_times[case_id], categories, rules))
     return 0
 
 

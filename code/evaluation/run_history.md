@@ -20,3 +20,5 @@ One row per full-suite run of `code/evaluation/main.py`. Metric definitions: `co
 | 2026-10-25 10:34 | 9f4d33a+dirty | stage 4: identifier + scope rule + account activity, documents via haiku vision | links:custom | 14 | recall 85.7% | precision 100.0% | — | — | — | — | — |
 | 2026-10-25 11:22 | e041266+dirty | stage 5: state at audit_at (signals, latest-wins, any-copy, coverage absence, cache-noise filter) | states:samples | 93 | state 100.0% | proof 100.0% | — | — | — | — | — |
 | 2026-10-25 11:22 | e041266+dirty | stage 5: state at audit_at (signals, latest-wins, any-copy, coverage absence, cache-noise filter) | states:custom | 12 | state 100.0% | proof 100.0% | — | — | — | — | — |
+| 2026-10-25 12:00 | c28c0ad+dirty | stage 6: categories (labels + Haiku over de-identified signatures) + decision table | decisions:samples | 93 | exact 100.0% | finding cites 100.0% | — | — | — | — | 0 review(s) |
+| 2026-10-25 12:00 | c28c0ad+dirty | stage 6: categories (labels + Haiku over de-identified signatures) + decision table | decisions:custom | 12 | exact 100.0% | finding cites 100.0% | — | — | — | — | 0 review(s) |

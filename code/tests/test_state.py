@@ -151,3 +151,22 @@ def test_a_cache_miss_in_the_same_trace_is_not_a_missing_record():
     o = obs({**merged, "_events": events}, location="trace tr-9")
 
     assert read_signals(o) == {"flow": "active", "existence": "present"}
+
+
+def test_screen_and_log_signals_found_in_the_eval_set():
+    connector_screen = obs({"Connector": "data_flow_1", "Mode": "Continuous", "Sync mode": "Continuous sync",
+                            "Status": "Healthy"}, location="connector_management_console.png")
+    paused_screen = obs({"Mode": "Paused"}, location="connector_management_console.png")
+    ticket_screen = obs({"Customer": "Kofi Agyeman", "Email": "k@x.com", "Order": "ORD-1"}, location="ticket.png")
+    loaded = obs({"event": "retained_order_loaded", "access": "allowed"}, location="trace tr-5")
+
+    assert read_signals(connector_screen)["flow"] == "active"
+    assert read_signals(paused_screen)["flow"] == "disabled"
+    assert read_signals(ticket_screen)["identity"] == "identifiable"
+    assert read_signals(loaded)["existence"] == "present"
+
+
+def test_configured_mode_never_overrides_the_enabled_flag():
+    disabled = obs({"customer_email": "a@b.c", "mode": "continuous_sync", "enabled": False})
+
+    assert read_signals(disabled)["flow"] == "disabled"

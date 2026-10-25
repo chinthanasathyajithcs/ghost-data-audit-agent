@@ -9,6 +9,7 @@
     python code/evaluation/main.py --suite intent                        # Stage 2 classifier on all distinct texts
     python code/evaluation/main.py --suite links                         # Stage 4 case files vs expected resources
     python code/evaluation/main.py --suite states                        # Stage 5 states vs states the answers imply
+    python code/evaluation/main.py --suite decisions                     # Stage 6 policy decisions vs expected operations
 
 Metric definitions: scoring.py and code/docs/stages/stage_1_evaluation_harness.md §4.2.
 """
@@ -34,6 +35,7 @@ import report  # noqa: E402
 from intent_suite import format_intent_score, run_intent_suite  # noqa: E402
 from link_suite import format_link_scores, run_link_suite  # noqa: E402
 from state_suite import format_state_scores, run_state_suite  # noqa: E402
+from decision_suite import format_decision_scores, run_decision_suite  # noqa: E402
 from scoring import score  # noqa: E402
 
 SUITES = {
@@ -46,7 +48,7 @@ HISTORY_FILE = EVAL_DIR / "run_history.md"
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Score the deletion audit agent against known answers.")
-    parser.add_argument("--suite", choices=("all", *SUITES, "intent", "links", "states"), default="all",
+    parser.add_argument("--suite", choices=("all", *SUITES, "intent", "links", "states", "decisions"), default="all",
                         help="all = samples + custom; intent = Stage 2 classifier on every distinct text; "
                              "links = Stage 4 case files; states = Stage 5 states")
     parser.add_argument("--cases", default="", help="comma-separated case_ids (no history row is written)")
@@ -162,6 +164,24 @@ def run_links(args: argparse.Namespace) -> int:
     identity = IdentityIndex.from_dataset(DATASET_DIR)
     extractor = DocumentExtractor(ClaudeCliBackend(), JsonCache(EXTRACTION_CACHE_FILE), EXTRACTION_MODEL)
     store = EvidenceStore.load(DATASET_DIR, identity, document_reader(extractor))
+    if args.suite == "decisions":
+        from deletion_audit.category import CategoryClassifier
+        from deletion_audit.config import CATEGORY_CACHE_FILE, CATEGORY_MODEL
+        from deletion_audit.policy import load_rules
+        from deletion_audit.usage import UsageRecorder
+
+        usage = UsageRecorder()
+        rules = load_rules(DATASET_DIR)
+        classifier = CategoryClassifier(ClaudeCliBackend(), JsonCache(CATEGORY_CACHE_FILE), CATEGORY_MODEL, rules,
+                                        usage=usage)
+        decision_scores = run_decision_suite(SUITES, store, identity, classifier, rules, load_predictions)
+        print(format_decision_scores(decision_scores))
+        print(usage.format_summary(classifier.cache_hits))
+        if not args.no_history:
+            stamp, commit = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"), git_commit()
+            append_history([report.decision_history_row(stamp, commit, args.label, f"decisions:{name}", s)
+                            for name, s in decision_scores.items()])
+        return 0
     if args.suite == "states":
         state_scores = run_state_suite(SUITES, store, identity, load_predictions)
         print(format_state_scores(state_scores))
@@ -191,7 +211,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.suite == "intent":
         return run_intent(args)
-    if args.suite in ("links", "states"):
+    if args.suite in ("links", "states", "decisions"):
         return run_links(args)
 
     wanted = {c.strip() for c in args.cases.split(",") if c.strip()}

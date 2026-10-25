@@ -127,6 +127,15 @@ def state_history_row(time: str, commit: str, label: str, suite: str, score) -> 
     return "| " + " | ".join(cells) + " |\n"
 
 
+def decision_history_row(time: str, commit: str, label: str, suite: str, score) -> str:
+    """Decision suite row: Status = exact decisions, Step column = finding citations."""
+    exact = score.correct / score.scored if score.scored else 1.0
+    cites = score.finding_cites_correct / score.finding_cites if score.finding_cites else 1.0
+    cells = (time, commit, label.replace("|", "/"), suite, str(score.scored), f"exact {pct(exact).strip()}",
+             f"finding cites {pct(cites).strip()}", "—", "—", "—", "—", f"{score.reviews} review(s)")
+    return "| " + " | ".join(cells) + " |\n"
+
+
 def metrics_dict(result: Score, problems: list[str]) -> dict:
     return {
         "cases": result.cases,
