@@ -6,3 +6,15 @@ code/usage/
 .venv/
 code.zip
 submission/
+
+# Agent chat logs and session transcripts (never publish)
+log.txt
+agent-trace*/
+agent-trace*.zip
+20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt
+*.jsonl
+.claude/
+
+# Challenge data is fetched separately (see README); run output is regenerated
+dataset/
+/output.csv

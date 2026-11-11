@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">Step 2: who are they, then and now?</title>
+  <desc id="d">A request arrives from an email the person stopped using. The agent looks up their history: signed up with an old email, later changed phone and email. Every identifier goes on one key ring: new email, old email, phone, email hash and the stable user ID that many records use instead of an email. Plain lookups, no AI, no guessing.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+    .ring-metal { fill: none; stroke: var(--muted); stroke-width: 5; }
+    .string { stroke: var(--muted); stroke-width: 1.5; }
+  </style>
+  <defs>
+    <!--DEFS-->
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Header -->
+  <text x="60" y="62" class="hand agent-t" font-size="30">Step 2</text>
+  <text x="60" y="110" class="h" font-size="42">Who are they, then and now?</text>
+  <text x="62" y="148" class="muted" font-size="20">People change emails and phones. Old copies of their data still use the old ones.</text>
+
+  <!-- Left: the request -->
+  <rect class="shadow" x="66" y="236" width="290" height="140" rx="14"/>
+  <rect class="paper" x="60" y="230" width="290" height="140" rx="14"/>
+  <rect class="obj" x="84" y="254" width="44" height="32" rx="4"/>
+  <path class="obj-line" d="M86 257l20 15 20-15"/>
+  <text x="142" y="276" class="muted" font-size="16">Request from</text>
+  <text x="84" y="326" font-size="22" font-weight="700">old@mail.example</text>
+  <text x="84" y="352" class="muted" font-size="15">sent 2026</text>
+  <text x="74" y="412" class="hand ghost-t" font-size="26">an email they stopped using!</text>
+
+  <path class="scribble" d="M362 300c12-12 22 6 34-4"/><path class="scribble" d="M386 290l12 7-10 9"/>
+
+  <!-- Middle: their history -->
+  <rect class="shadow" x="416" y="216" width="320" height="290" rx="14"/>
+  <rect class="paper" x="410" y="210" width="320" height="290" rx="14"/>
+  <text x="434" y="250" class="h" font-size="24">Their history</text>
+  <line class="axis" x1="448" y1="288" x2="448" y2="456"/>
+  <circle class="dot-agent" cx="448" cy="288" r="8"/>
+  <text x="472" y="285" class="muted" font-size="15">2023 · signed up</text>
+  <text x="472" y="307" font-size="18" font-weight="700">old@mail.example</text>
+  <circle class="dot-agent" cx="448" cy="372" r="8"/>
+  <text x="472" y="369" class="muted" font-size="15">2024 · new phone</text>
+  <text x="472" y="391" font-size="18" font-weight="700">+1 555 0142</text>
+  <circle class="dot-agent" cx="448" cy="456" r="8"/>
+  <text x="472" y="453" class="muted" font-size="15">2025 · new email</text>
+  <text x="472" y="475" font-size="18" font-weight="700">new@mail.example</text>
+
+  <path class="scribble" d="M744 344c12-12 22 6 34-4"/><path class="scribble" d="M768 334l12 7-10 9"/>
+
+  <!-- Right: the key ring -->
+  <text x="800" y="200" class="hand agent-t" font-size="26">all of them go on one key ring</text>
+  <line class="string" x1="852" y1="340" x2="898" y2="238"/>
+  <line class="string" x1="852" y1="340" x2="898" y2="298"/>
+  <line class="string" x1="852" y1="340" x2="898" y2="358"/>
+  <line class="string" x1="852" y1="340" x2="898" y2="418"/>
+  <line class="string" x1="852" y1="340" x2="898" y2="478"/>
+  <circle class="ring-metal" cx="828" cy="340" r="24"/>
+  <g transform="rotate(-2 990 238)">
+    <rect class="paper" x="880" y="216" width="230" height="44" rx="10"/><circle class="hollow" cx="898" cy="238" r="5"/>
+    <text x="914" y="244" font-size="17">new@mail.example</text>
+  </g>
+  <g transform="rotate(2 990 298)">
+    <rect class="paper-key" x="880" y="276" width="230" height="44" rx="10"/><circle class="hollow" cx="898" cy="298" r="5"/>
+    <text x="914" y="304" font-size="17">old@mail.example</text>
+  </g>
+  <g transform="rotate(-1.5 990 358)">
+    <rect class="paper" x="880" y="336" width="230" height="44" rx="10"/><circle class="hollow" cx="898" cy="358" r="5"/>
+    <text x="914" y="364" font-size="17">+1 555 0142</text>
+  </g>
+  <g transform="rotate(1.5 990 418)">
+    <rect class="paper" x="880" y="396" width="230" height="44" rx="10"/><circle class="hollow" cx="898" cy="418" r="5"/>
+    <text x="914" y="424" font-size="17">email hash a3f9…</text>
+  </g>
+  <g transform="rotate(-1 990 478)">
+    <rect class="paper" x="880" y="456" width="230" height="44" rx="10"/><circle class="hollow" cx="898" cy="478" r="5"/>
+    <text x="914" y="484" font-size="17"><tspan font-weight="700">user_4471</tspan><tspan class="muted"> · stable ID</tspan></text>
+  </g>
+
+  <!-- takeaway -->
+  <text x="600" y="580" text-anchor="middle" class="hand" font-size="30">One request, every identifier they ever had. Plain lookups: no AI, no guessing.</text>
+</svg>

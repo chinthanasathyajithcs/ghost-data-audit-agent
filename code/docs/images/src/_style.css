@@ -1,0 +1,37 @@
+    svg { --bg:#F8F7FC; --panel:#FFFFFF; --ink:#1E1B2E; --muted:#6B6880; --line:#DCD7EA; --soft:#F0EDF8;
+          --agent:#6D28D9; --agent-soft:#EDE9FE; --ghost:#DB2777; --ghost-soft:#FCE7F3; --ok:#059669; --ok-soft:#D1FAE5; --claim:#9A97AA; }
+    text { font-family: 'Atkinson', 'Segoe UI', Helvetica, Arial, sans-serif; fill: var(--ink); }
+    .h { font-family: 'Fraunces', Georgia, serif; font-weight: 700; }
+    .hand { font-family: 'Caveat', 'Comic Sans MS', cursive; font-weight: 600; }
+    .bg { fill: var(--bg); }
+    .muted { fill: var(--muted); } .agent-t { fill: var(--agent); } .ghost-t { fill: var(--ghost); }
+    .ok-t { fill: var(--ok); } .claim-t { fill: var(--claim); } .on-dark { fill: var(--panel); }
+    .paper { fill: var(--panel); stroke: var(--line); stroke-width: 2; }
+    .paper-key { fill: var(--panel); stroke: var(--agent); stroke-width: 3; }
+    .paper-claim { fill: var(--panel); stroke: var(--claim); stroke-width: 2; stroke-dasharray: 7 5; }
+    .shadow { fill: var(--soft); } .later { fill: var(--soft); }
+    .obj { fill: var(--panel); stroke: var(--muted); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+    .obj-line { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .obj-agent { fill: var(--panel); stroke: var(--agent); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+    .line-agent { fill: none; stroke: var(--agent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .person { fill: var(--agent-soft); stroke: var(--agent); stroke-width: 2.5; }
+    .stamp { fill: none; stroke: var(--claim); stroke-width: 3; } .stamp-in { fill: none; stroke: var(--claim); stroke-width: 1.5; }
+    .stamp-ok { fill: none; stroke: var(--ok); stroke-width: 3; } .stamp-bad { fill: none; stroke: var(--ghost); stroke-width: 3; }
+    .lens { fill: none; stroke: var(--agent); stroke-width: 7; } .lens-fill { fill: var(--agent-soft); fill-opacity: .6; }
+    .handle { stroke: var(--agent); stroke-width: 14; stroke-linecap: round; }
+    .ghost-body { fill: var(--ghost-soft); stroke: var(--ghost); stroke-width: 2.5; stroke-linejoin: round; }
+    .ghost-eye { fill: var(--ghost); }
+    .scribble { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .scribble-agent { fill: none; stroke: var(--agent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .dashed { stroke-dasharray: 7 6; }
+    .pill-bad { fill: var(--ghost-soft); } .pill-agent { fill: var(--agent-soft); } .pill-ok { fill: var(--ok-soft); } .pill-soft { fill: var(--soft); }
+    .dot-agent { fill: var(--agent); } .dot-ok { fill: var(--ok); } .dot-ghost { fill: var(--ghost); } .dot-claim { fill: var(--claim); }
+    .bar-bad { fill: var(--ghost); } .bar-agent { fill: var(--agent); } .bar-ok { fill: var(--ok); }
+    .redact { fill: var(--ink); }
+    .white { fill: none; stroke: var(--panel); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .axis { stroke: var(--line); stroke-width: 3; stroke-linecap: round; }
+    .stem { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 2 5; stroke-linecap: round; }
+    .audit { stroke: var(--agent); stroke-width: 2.5; stroke-dasharray: 8 6; stroke-linecap: round; }
+    .ring { fill: none; stroke: var(--agent); stroke-width: 3; }
+    .hollow { fill: var(--bg); stroke: var(--claim); stroke-width: 2.5; }
+    .faded { opacity: .45; }

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">Step 7: the verdict and the fix-it plan</title>
+  <desc id="d">Every case ends as complete (everything proven clean), incomplete (ghosts found) or not applicable (not a deletion request). An incomplete case gets an ordered plan. Find: a ghost in a backup and a sync still copying data, each with the file that proves it. Fix: stop the sync, block the restore, then delete the copy, so leaks stop before cleanup. Check: the sync is off, the restore is blocked, the copy is gone. On the 32 public sample cases every verdict was right and every step the agent wrote was correct.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+  </style>
+  <defs>
+    <!--DEFS-->
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Header -->
+  <text x="60" y="62" class="hand agent-t" font-size="30">Step 7</text>
+  <text x="60" y="110" class="h" font-size="42">The verdict and the fix-it plan</text>
+  <text x="62" y="148" class="muted" font-size="20">Every case ends with one of three verdicts, and the steps come in a safe order.</text>
+
+  <!-- verdict stamps -->
+  <g transform="rotate(-4 180 230)">
+    <rect class="stamp-ok" x="64" y="204" width="236" height="52" rx="6"/>
+    <text x="182" y="238" text-anchor="middle" class="ok-t" font-size="22" font-weight="700" letter-spacing="2">COMPLETE</text>
+  </g>
+  <text x="70" y="282" class="muted" font-size="15">every copy proven clean</text>
+
+  <g transform="rotate(3 180 330)">
+    <rect class="pill-bad" x="64" y="304" width="236" height="52" rx="6"/>
+    <rect class="stamp-bad" x="64" y="304" width="236" height="52" rx="6"/>
+    <text x="182" y="338" text-anchor="middle" class="ghost-t" font-size="22" font-weight="700" letter-spacing="2">INCOMPLETE</text>
+  </g>
+  <text x="70" y="384" class="muted" font-size="15">ghosts found: here’s the plan</text>
+
+  <g transform="rotate(-2 180 430)">
+    <rect class="stamp" x="64" y="404" width="236" height="52" rx="6"/>
+    <text x="182" y="438" text-anchor="middle" class="claim-t" font-size="20" font-weight="700" letter-spacing="2">NOT APPLICABLE</text>
+  </g>
+  <text x="70" y="482" class="muted" font-size="15">not a deletion request</text>
+
+  <path class="scribble-agent" d="M312 332c40-14 70 4 96-4"/><path class="scribble-agent" d="M396 320l13 8-11 10"/>
+
+  <!-- the plan -->
+  <rect class="shadow" x="428" y="202" width="722" height="300" rx="14"/>
+  <rect class="paper" x="420" y="194" width="722" height="300" rx="14"/>
+  <rect class="bar-bad" x="446" y="222" width="5" height="26" rx="2"/>
+  <text x="462" y="243" class="h ghost-t" font-size="24">Find</text>
+  <circle class="dot-ghost" cx="458" cy="284" r="12"/><text x="458" y="289" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">1</text>
+  <text x="478" y="290" font-size="17">Ghost in a backup</text>
+  <text x="478" y="311" class="muted" font-size="15">proof: file 54</text>
+  <circle class="dot-ghost" cx="458" cy="344" r="12"/><text x="458" y="349" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">2</text>
+  <text x="478" y="350" font-size="17">Sync still copying</text>
+  <text x="478" y="371" class="muted" font-size="15">proof: file 31</text>
+  <rect class="bar-agent" x="682" y="222" width="5" height="26" rx="2"/>
+  <text x="698" y="243" class="h agent-t" font-size="24">Fix</text>
+  <circle class="dot-agent" cx="694" cy="284" r="12"/><text x="694" y="289" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">3</text>
+  <text x="714" y="290" font-size="17">Stop the sync</text>
+  <circle class="dot-agent" cx="694" cy="332" r="12"/><text x="694" y="337" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">4</text>
+  <text x="714" y="338" font-size="17">Block the restore</text>
+  <circle class="dot-agent" cx="694" cy="380" r="12"/><text x="694" y="385" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">5</text>
+  <text x="714" y="386" font-size="17">Delete the copy</text>
+  <rect class="bar-ok" x="918" y="222" width="5" height="26" rx="2"/>
+  <text x="934" y="243" class="h ok-t" font-size="24">Check</text>
+  <circle class="dot-ok" cx="930" cy="284" r="12"/><text x="930" y="289" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">6</text>
+  <text x="950" y="290" font-size="17">Sync is off</text>
+  <circle class="dot-ok" cx="930" cy="332" r="12"/><text x="930" y="337" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">7</text>
+  <text x="950" y="338" font-size="17">Restore is blocked</text>
+  <circle class="dot-ok" cx="930" cy="380" r="12"/><text x="930" y="385" text-anchor="middle" class="on-dark" font-size="13" font-weight="700">8</text>
+  <text x="950" y="386" font-size="17">Copy is gone</text>
+  <text x="684" y="470" class="hand agent-t" font-size="24">stop the leaks first, then clean up</text>
+
+  <!-- results -->
+  <text x="600" y="562" text-anchor="middle" class="hand" font-size="30">Tested on 32 sample cases: every verdict right, every step it wrote correct.</text>
+  <text x="600" y="596" text-anchor="middle" class="muted" font-size="15">verdicts 32/32 · step precision 100% · recall 90.7% · F1 95.1%</text>
+</svg>

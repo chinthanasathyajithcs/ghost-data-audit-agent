@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">The workflow said Complete. The data was still there.</title>
+  <desc id="d">Three scenes. One: a person asks to have everything about them deleted, and the workflow stamps it Complete. Two: the agent checks every copy of their data with a magnifying glass and finds a ghost of the data hiding in a backup. Three: the agent hands back a report saying Not complete, with what it found, how to fix it, and how to check the fix.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+  </style>
+  <defs>
+    <!--DEFS-->
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Headline -->
+  <text x="60" y="86" class="h" font-size="46">The workflow said “Complete.”</text>
+  <text x="60" y="140" class="h ghost-t" font-size="46">The data was still there.</text>
+  <text x="62" y="182" class="muted" font-size="20">An AI agent that checks whether a person’s data is really gone, from every copy.</text>
+
+  <!-- Scene 1: the request -->
+  <circle class="person" cx="96" cy="290" r="24"/>
+  <path class="person" d="M58 362c0-34 76-34 76 0z"/>
+  <path class="paper" d="M168 236H342a18 18 0 0 1 18 18V322a18 18 0 0 1-18 18H168a18 18 0 0 1-18-18V304l-22-8 22-10V254a18 18 0 0 1 18-18z"/>
+  <text x="172" y="272" font-size="20">Please delete</text>
+  <text x="172" y="298" font-size="20">everything you</text>
+  <text x="172" y="324" font-size="20">have on me.</text>
+
+  <g transform="rotate(-7 225 440)">
+    <rect class="stamp" x="140" y="412" width="170" height="56" rx="6"/>
+    <rect class="stamp-in" x="146" y="418" width="158" height="44" rx="4"/>
+    <text x="225" y="449" text-anchor="middle" class="claim-t" font-size="25" font-weight="700" letter-spacing="3">COMPLETE</text>
+  </g>
+  <text x="160" y="512" class="hand muted" font-size="25">…said the workflow</text>
+
+  <!-- arrow 1 -->
+  <path class="scribble" d="M376 404c14-14 30 8 50-6"/>
+  <path class="scribble" d="M414 390l13 8-11 10"/>
+
+  <!-- Scene 2: the search -->
+  <text x="446" y="252" class="hand agent-t" font-size="26">checks every copy,</text>
+  <text x="446" y="280" class="hand agent-t" font-size="26">even under old emails</text>
+  <path class="scribble-agent" d="M640 262c22-2 30 8 30 22"/>
+  <path class="scribble-agent" d="M662 276l8 10 8-10"/>
+
+  <!-- lens tint sits behind the objects so the ghost stays bright -->
+  <circle class="lens-fill" cx="680" cy="352" r="66"/>
+  <!-- database: checked, clean -->
+  <path class="obj" d="M446 352v52a28 9 0 0 0 56 0v-52"/>
+  <ellipse class="obj" cx="474" cy="352" rx="28" ry="9"/>
+  <path class="obj-line" d="M446 378a28 9 0 0 0 56 0"/>
+  <circle class="dot-ok" cx="500" cy="338" r="11"/>
+  <path class="white" d="M495 338l3.5 3.5 6.5-6.5"/>
+  <!-- log page: checked, clean -->
+  <rect class="obj" x="526" y="342" width="50" height="66" rx="6"/>
+  <path class="obj-line" d="M537 360h28M537 375h28M537 390h18"/>
+  <circle class="dot-ok" cx="574" cy="340" r="11"/>
+  <path class="white" d="M569 340l3.5 3.5 6.5-6.5"/>
+  <!-- backup box with a ghost rising out of it -->
+  <use href="#ghost" x="652" y="290" width="56" height="64"/>
+  <rect class="obj" x="644" y="364" width="72" height="46" rx="6"/>
+  <rect class="obj" x="638" y="350" width="84" height="18" rx="5"/>
+  <path class="obj-line" d="M668 384h24"/>
+  <!-- magnifying glass over the backup -->
+  <line class="handle" x1="729" y1="401" x2="758" y2="432"/>
+  <circle class="lens" cx="680" cy="352" r="66"/>
+
+  <!-- arrow 2 -->
+  <path class="scribble" d="M790 404c14-14 30 8 50-6"/>
+  <path class="scribble" d="M828 390l13 8-11 10"/>
+
+  <!-- Scene 3: the report -->
+  <g transform="rotate(2.5 990 380)">
+    <rect class="shadow" x="878" y="242" width="250" height="272" rx="12"/>
+    <rect class="paper" x="870" y="234" width="250" height="272" rx="12"/>
+    <rect class="pill-bad" x="892" y="256" width="146" height="36" rx="18"/>
+    <text x="965" y="280" text-anchor="middle" class="ghost-t" font-size="19" font-weight="700">Not complete</text>
+
+    <use href="#ghost" x="892" y="314" width="26" height="30"/>
+    <text x="930" y="328" font-size="17" font-weight="700">Found it</text>
+    <text x="930" y="349" class="muted" font-size="16">still in a backup</text>
+
+    <circle class="dot-agent" cx="905" cy="390" r="13"/>
+    <path class="white" d="M899 386h12M901 386l1 10h6l1-10M903 386v-2h4v2"/>
+    <text x="930" y="388" font-size="17" font-weight="700">Delete it</text>
+    <text x="930" y="409" class="muted" font-size="16">and block restores</text>
+
+    <circle class="dot-ok" cx="905" cy="450" r="13"/>
+    <path class="white" d="M899 450l4 4 8-8"/>
+    <text x="930" y="448" font-size="17" font-weight="700">Check it’s gone</text>
+    <text x="930" y="469" class="muted" font-size="16">and stays gone</text>
+  </g>
+
+  <!-- captions -->
+  <text x="230" y="590" text-anchor="middle" class="hand" font-size="30">1. Someone asks to be deleted</text>
+  <text x="614" y="590" text-anchor="middle" class="hand" font-size="30">2. The agent checks every copy</text>
+  <text x="1000" y="590" text-anchor="middle" class="hand" font-size="30">3. A verdict and a fix-it plan</text>
+</svg>

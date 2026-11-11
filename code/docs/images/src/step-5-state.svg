@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">Step 5: what was true on audit day?</title>
+  <desc id="d">A timeline of what the evidence says about one record. A February snapshot shows it still there. A June log says deleted, which is only a claim. An August replica snapshot shows it still there, and this one counts because it is the latest before audit day. An October export says gone, but it came after the audit so it is ignored. The agent then asks four questions about every record: is it still there, does it name the person, is it still being copied, and can a backup restore it.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+  </style>
+  <defs>
+    <!--DEFS-->
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Header -->
+  <text x="60" y="62" class="hand agent-t" font-size="30">Step 5</text>
+  <text x="60" y="110" class="h" font-size="42">What was true on audit day?</text>
+  <text x="62" y="148" class="muted" font-size="20">A log can say “deleted”. Only snapshots taken before the audit count.</text>
+
+  <!-- after-the-audit zone -->
+  <rect class="later" x="715" y="212" width="110" height="310" rx="14"/>
+  <text x="770" y="242" text-anchor="middle" class="hand muted" font-size="24">too late</text>
+  <line class="audit" x1="715" y1="200" x2="715" y2="524"/>
+  <text x="715" y="192" text-anchor="middle" class="hand agent-t" font-size="28">audit day</text>
+
+  <!-- timeline -->
+  <line class="axis" x1="60" y1="380" x2="820" y2="380"/>
+  <g class="muted" font-size="15" text-anchor="middle">
+    <text x="100" y="408" class="muted">Feb</text><text x="182" y="408" class="muted">Mar</text>
+    <text x="264" y="408" class="muted">Apr</text><text x="346" y="408" class="muted">May</text>
+    <text x="428" y="408" class="muted">Jun</text><text x="510" y="408" class="muted">Jul</text>
+    <text x="592" y="408" class="muted">Aug</text><text x="674" y="408" class="muted">Sep</text>
+    <text x="756" y="408" class="muted">Oct</text>
+  </g>
+
+  <!-- Feb: still there -->
+  <line class="stem" x1="136" y1="326" x2="136" y2="372"/>
+  <circle class="dot-ghost" cx="136" cy="380" r="8"/>
+  <rect class="shadow" x="52" y="252" width="180" height="80" rx="12"/>
+  <rect class="paper" x="46" y="246" width="180" height="80" rx="12"/>
+  <use href="#ghost" x="60" y="264" width="34" height="39"/>
+  <text x="106" y="282" font-size="19" font-weight="700">Still there</text>
+  <text x="106" y="306" class="muted" font-size="16">Feb snapshot</text>
+
+  <!-- Jun: a claim -->
+  <line class="stem" x1="462" y1="388" x2="462" y2="430"/>
+  <rect class="hollow" x="455" y="373" width="14" height="14" transform="rotate(45 462 380)"/>
+  <rect class="paper-claim" x="372" y="430" width="180" height="80" rx="12"/>
+  <text x="392" y="464" class="muted" font-size="21" font-weight="700">“Deleted!”</text>
+  <text x="392" y="490" class="muted" font-size="16">Jun activity log</text>
+  <text x="568" y="470" class="hand muted" font-size="26">just a claim</text>
+
+  <!-- Aug: still there, and this one counts -->
+  <line class="stem" x1="616" y1="326" x2="616" y2="366"/>
+  <circle class="ring" cx="616" cy="380" r="15"/>
+  <circle class="dot-ghost" cx="616" cy="380" r="8"/>
+  <text x="520" y="232" class="hand agent-t" font-size="28">this one counts!</text>
+  <rect class="shadow" x="518" y="252" width="186" height="80" rx="12"/>
+  <rect class="paper-key" x="512" y="246" width="186" height="80" rx="12"/>
+  <use href="#ghost" x="526" y="264" width="34" height="39"/>
+  <text x="572" y="282" font-size="19" font-weight="700">Still there</text>
+  <text x="572" y="306" class="muted" font-size="16">Aug, in a replica</text>
+
+  <!-- Oct: after the audit, ignored -->
+  <g class="faded">
+    <line class="stem" x1="782" y1="388" x2="782" y2="440"/>
+    <circle class="hollow" cx="782" cy="380" r="8"/>
+    <rect class="paper" x="728" y="440" width="92" height="70" rx="12"/>
+    <text x="744" y="470" font-size="19" font-weight="700">Gone</text>
+    <text x="744" y="494" class="muted" font-size="15">Oct export</text>
+  </g>
+
+  <!-- Four questions -->
+  <rect class="shadow" x="868" y="208" width="290" height="340" rx="14"/>
+  <rect class="paper" x="860" y="200" width="290" height="340" rx="14"/>
+  <text x="884" y="242" class="h" font-size="25">Four questions</text>
+  <text x="884" y="266" class="muted" font-size="16">asked about every record</text>
+
+  <use href="#ghost" x="882" y="294" width="28" height="32"/>
+  <text x="924" y="310" font-size="17" font-weight="700">Still there?</text>
+  <text x="924" y="332" class="ghost-t" font-size="16">Yes, in a replica</text>
+
+  <use href="#ghost" x="882" y="354" width="28" height="32"/>
+  <text x="924" y="370" font-size="17" font-weight="700">Does it name them?</text>
+  <text x="924" y="392" class="ghost-t" font-size="16">Yes, email visible</text>
+
+  <circle class="dot-ok" cx="896" cy="426" r="13"/>
+  <path class="white" d="M890 426l4 4 8-8"/>
+  <text x="924" y="430" font-size="17" font-weight="700">Still being copied?</text>
+  <text x="924" y="452" class="ok-t" font-size="16">No, the sync is off</text>
+
+  <use href="#ghost" x="882" y="474" width="28" height="32"/>
+  <text x="924" y="490" font-size="17" font-weight="700">Can a backup restore it?</text>
+  <text x="924" y="512" class="ghost-t" font-size="16">Yes, restore is open</text>
+
+  <!-- takeaway -->
+  <text x="600" y="594" text-anchor="middle" class="hand" font-size="30">Every ghost becomes a finding, then a fix, then a check.</text>
+</svg>

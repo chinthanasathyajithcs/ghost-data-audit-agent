@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">Step 6: what does the policy say?</title>
+  <desc id="d">Deleting is not always right. The policy file decides one of five treatments for each record: delete the whole record (for example a marketing profile), redact names and emails (a support message), anonymize so it can no longer be traced to the person (an analytics row), keep it because the law requires it (a legal hold record), or leave a tombstone with only the stable ID (a closed account). An AI model names the record type only when a file does not say it. The rules are read from the policy file at run time, never hard-coded.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+  </style>
+  <defs>
+    <!--DEFS-->
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Header -->
+  <text x="60" y="62" class="hand agent-t" font-size="30">Step 6</text>
+  <text x="60" y="110" class="h" font-size="42">What does the policy say?</text>
+  <text x="62" y="148" class="muted" font-size="20">Deleting isn’t always right. Some records must be kept, cleaned or anonymized.</text>
+
+  <!-- Delete -->
+  <rect class="shadow" x="66" y="206" width="204" height="286" rx="14"/>
+  <rect class="paper" x="60" y="200" width="204" height="286" rx="14"/>
+  <g class="faded">
+    <rect class="paper" x="100" y="226" width="124" height="86" rx="8"/>
+    <circle class="person" cx="122" cy="248" r="11"/>
+    <path class="obj-line" d="M142 243h60M142 255h46"/>
+    <path class="obj-line" d="M114 280h96M114 294h70"/>
+    </g>
+    <use href="#bin" x="196" y="278" width="44" height="44"/>
+  <text x="162" y="372" text-anchor="middle" class="h" font-size="25">Delete</text>
+  <text x="162" y="398" text-anchor="middle" class="muted" font-size="15">e.g. marketing profile</text>
+  <text x="162" y="436" text-anchor="middle" font-size="16.5">The whole record</text>
+  <text x="162" y="458" text-anchor="middle" font-size="16.5">goes away.</text>
+  <!-- Redact -->
+  <rect class="shadow" x="285" y="206" width="204" height="286" rx="14"/>
+  <rect class="paper" x="279" y="200" width="204" height="286" rx="14"/>
+  <g>
+    <rect class="paper" x="319" y="226" width="124" height="86" rx="8"/>
+    <circle class="person" cx="341" cy="248" r="11"/>
+    <path class="obj-line" d="M361 243h60M361 255h46"/>
+    <path class="obj-line" d="M333 280h96M333 294h70"/>
+    <rect class="redact" x="357" y="236" width="68" height="13" rx="2"/><rect class="redact" x="357" y="249" width="54" height="13" rx="2"/>
+    </g>
+  <text x="381" y="372" text-anchor="middle" class="h" font-size="25">Redact</text>
+  <text x="381" y="398" text-anchor="middle" class="muted" font-size="15">e.g. support message</text>
+  <text x="381" y="436" text-anchor="middle" font-size="16.5">Names and emails</text>
+  <text x="381" y="458" text-anchor="middle" font-size="16.5">are blacked out.</text>
+  <!-- Anonymize -->
+  <rect class="shadow" x="504" y="206" width="204" height="286" rx="14"/>
+  <rect class="paper" x="498" y="200" width="204" height="286" rx="14"/>
+  <g>
+    <rect class="paper" x="538" y="226" width="124" height="86" rx="8"/>
+    <circle class="hollow" cx="560" cy="248" r="11"/><text x="560" y="253" text-anchor="middle" class="agent-t" font-size="14" font-weight="700">?</text>
+    <path class="obj-line dashed" d="M580 243h60M580 255h46"/>
+    <path class="obj-line" d="M552 280h96M552 294h70"/>
+    </g>
+  <text x="600" y="372" text-anchor="middle" class="h" font-size="25">Anonymize</text>
+  <text x="600" y="398" text-anchor="middle" class="muted" font-size="15">e.g. analytics row</text>
+  <text x="600" y="436" text-anchor="middle" font-size="16.5">Kept, but no longer</text>
+  <text x="600" y="458" text-anchor="middle" font-size="16.5">traced to them.</text>
+  <!-- Keep -->
+  <rect class="shadow" x="723" y="206" width="204" height="286" rx="14"/>
+  <rect class="paper" x="717" y="200" width="204" height="286" rx="14"/>
+  <g>
+    <rect class="paper" x="757" y="226" width="124" height="86" rx="8"/>
+    <circle class="person" cx="779" cy="248" r="11"/>
+    <path class="obj-line" d="M799 243h60M799 255h46"/>
+    <path class="obj-line" d="M771 280h96M771 294h70"/>
+    </g>
+    <circle class="dot-ok" cx="877" cy="232" r="17"/><rect x="869" y="229" width="16" height="12" rx="2" style="fill:var(--panel)"/><path class="white" d="M872 229v-4a5 5 0 0 1 10 0v4"/>
+  <text x="819" y="372" text-anchor="middle" class="h" font-size="25">Keep</text>
+  <text x="819" y="398" text-anchor="middle" class="muted" font-size="15">e.g. legal hold record</text>
+  <text x="819" y="436" text-anchor="middle" font-size="16.5">The law says</text>
+  <text x="819" y="458" text-anchor="middle" font-size="16.5">it must stay.</text>
+  <!-- Tombstone -->
+  <rect class="shadow" x="942" y="206" width="204" height="286" rx="14"/>
+  <rect class="paper" x="936" y="200" width="204" height="286" rx="14"/>
+  <path class="obj" d="M994 314v-56a44 44 0 0 1 88 0v56z"/><path class="obj-line" d="M974 314h128"/><text x="1038" y="274" text-anchor="middle" font-size="15" font-weight="700">user_4471</text><path class="obj-line" d="M1016 288h44"/>
+  <text x="1038" y="372" text-anchor="middle" class="h" font-size="25">Tombstone</text>
+  <text x="1038" y="398" text-anchor="middle" class="muted" font-size="15">e.g. closed account</text>
+  <text x="1038" y="436" text-anchor="middle" font-size="16.5">Only the stable ID</text>
+  <text x="1038" y="458" text-anchor="middle" font-size="16.5">stays behind.</text>
+
+  <!-- AI note + takeaway -->
+  <use href="#ai" x="352" y="512" width="44" height="24"/>
+  <text x="406" y="529" class="muted" font-size="16">names the record type, only when a file doesn’t say it</text>
+  <text x="600" y="592" text-anchor="middle" class="hand" font-size="30">The rules come from the policy file, read at run time. Never hard-coded.</text>
+</svg>

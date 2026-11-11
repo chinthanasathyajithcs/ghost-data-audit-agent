@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">Step 3: reading 94 files in 6 formats</title>
+  <desc id="d">Text files (24 SQL snapshots, 28 JSON exports, 26 logs and 1 text record) are read by plain code. Pictures (11 screenshots and 4 PDFs) are read by an AI model. Both become one list of facts, and every fact remembers which file it came from and when.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+  </style>
+  <defs>
+    <!--DEFS-->
+    <symbol id="doc" viewBox="0 0 70 86" overflow="visible">
+      <path class="obj" d="M0 0h50l20 20v66H0z"/><path class="obj-line" d="M50 0v20h20"/>
+    </symbol>
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Header -->
+  <text x="60" y="62" class="hand agent-t" font-size="30">Step 3</text>
+  <text x="60" y="110" class="h" font-size="42">Reading 94 files in 6 formats</text>
+  <text x="62" y="148" class="muted" font-size="20">Text files are read by plain code. Screenshots and PDFs are read by an AI model.</text>
+
+  <!-- text files -->
+  <g text-anchor="middle">
+    <use href="#doc" x="70" y="200" width="70" height="86"/>
+    <text x="105" y="252" font-size="17" font-weight="700">SQL</text><text x="105" y="310" class="muted" font-size="15">24 files</text>
+    <use href="#doc" x="165" y="200" width="70" height="86"/>
+    <text x="200" y="252" font-size="17" font-weight="700">JSON</text><text x="200" y="310" class="muted" font-size="15">28 files</text>
+    <use href="#doc" x="260" y="200" width="70" height="86"/>
+    <text x="295" y="252" font-size="17" font-weight="700">LOG</text><text x="295" y="310" class="muted" font-size="15">26 files</text>
+    <use href="#doc" x="355" y="200" width="70" height="86"/>
+    <text x="390" y="252" font-size="17" font-weight="700">TXT</text><text x="390" y="310" class="muted" font-size="15">1 file</text>
+  </g>
+
+  <!-- pictures -->
+  <g text-anchor="middle">
+    <rect class="obj" x="70" y="380" width="80" height="64" rx="6"/>
+    <circle class="obj-line" cx="92" cy="400" r="6"/>
+    <path class="obj-line" d="M80 436l22-20 16 12 10-8 14 14"/>
+    <text x="110" y="476" class="muted" font-size="15">11 screenshots</text>
+    <use href="#doc" x="185" y="370" width="70" height="86"/>
+    <text x="220" y="420" font-size="17" font-weight="700">PDF</text><text x="220" y="476" class="muted" font-size="15">4 files</text>
+  </g>
+
+  <!-- arrows into the readers -->
+  <path class="scribble" d="M436 250c14-10 22 8 34 2"/><path class="scribble" d="M460 243l12 8-10 9"/>
+  <path class="scribble" d="M268 414c60-12 140 16 202 8"/><path class="scribble" d="M460 414l12 8-10 9"/>
+
+  <!-- plain-code reader -->
+  <circle class="obj-agent" cx="526" cy="256" r="44"/>
+  <path class="line-agent" d="M512 244l-13 12 13 12M540 244l13 12-13 12M531 238l-10 36"/>
+  <text x="526" y="332" text-anchor="middle" class="hand muted" font-size="25">plain code</text>
+
+  <!-- AI reader -->
+  <circle class="obj-agent" cx="526" cy="426" r="44"/>
+  <path class="line-agent" d="M504 426q22-20 44 0q-22 20-44 0z"/>
+  <circle class="dot-agent" cx="526" cy="426" r="6"/>
+  <use href="#ai" x="548" y="372" width="44" height="24"/>
+  <text x="526" y="502" text-anchor="middle" class="hand agent-t" font-size="25">AI reads the picture</text>
+
+  <!-- arrows out -->
+  <path class="scribble" d="M578 256c40 0 60 40 96 48"/><path class="scribble" d="M662 294l13 10-12 8"/>
+  <path class="scribble" d="M578 426c40 0 60-30 96-38"/><path class="scribble" d="M662 378l13 10-12 8"/>
+
+  <!-- one list of facts -->
+  <rect class="shadow" x="698" y="208" width="452" height="306" rx="14"/>
+  <rect class="paper" x="690" y="200" width="452" height="306" rx="14"/>
+  <text x="716" y="242" class="h" font-size="24">One list of facts</text>
+
+  <circle class="dot-agent" cx="722" cy="282" r="6"/>
+  <text x="740" y="288" font-size="17"><tspan font-weight="700">ticket_8812</tspan> names old@mail.example</text>
+  <text x="740" y="310" class="muted" font-size="15">from: replica snapshot · Aug 2026</text>
+
+  <circle class="dot-agent" cx="722" cy="356" r="6"/>
+  <text x="740" y="362" font-size="17"><tspan font-weight="700">invoice 2207</tspan> shows new@mail.example</text>
+  <text x="740" y="384" class="muted" font-size="15">from: scanned PDF · Jun 2026</text>
+
+  <circle class="dot-claim" cx="722" cy="430" r="6"/>
+  <text x="740" y="436" font-size="17"><tspan font-weight="700">user_4471</tspan> “deleted”</text>
+  <text x="740" y="458" class="muted" font-size="15">from: activity log · Jun 2026 · only a claim</text>
+
+  <!-- takeaway -->
+  <text x="600" y="580" text-anchor="middle" class="hand" font-size="30">Every fact remembers which file it came from, and when.</text>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">Step 1: did they really ask for deletion?</title>
+  <desc id="d">Four people write in. "Please erase my account and all my data" and a German request to delete an account are deletion requests, so they get audited. "Can you send me a copy of my data?" and "Stop sending me marketing emails" are not deletion requests, so they are marked not applicable and nothing else runs. An AI model reads each request.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+  </style>
+  <defs>
+    <!--DEFS-->
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Header -->
+  <text x="60" y="62" class="hand agent-t" font-size="30">Step 1</text>
+  <text x="60" y="110" class="h" font-size="42">Did they really ask for deletion?</text>
+  <text x="62" y="148" class="muted" font-size="20">Requests arrive in many languages. Only real deletion requests get audited.</text>
+
+  <!-- column notes -->
+  <text x="120" y="210" class="hand muted" font-size="26">what people wrote</text>
+  <use href="#ai" x="660" y="190" width="44" height="24"/>
+  <text x="714" y="210" class="hand agent-t" font-size="26">what the AI decided</text>
+
+  <!-- row 1 -->
+  <circle class="person" cx="82" cy="257" r="21"/>
+  <text x="82" y="263" text-anchor="middle" class="agent-t" font-size="17" font-weight="700">M</text>
+  <path class="paper" d="M134 228H546a14 14 0 0 1 14 14V272a14 14 0 0 1-14 14H134a14 14 0 0 1-14-14V266l-12-9 12-7V242a14 14 0 0 1 14-14z"/>
+  <text x="140" y="263" font-size="18">“Please erase my account and all my data.”</text>
+  <path class="scribble" d="M578 258c14-10 26 6 42-4"/><path class="scribble" d="M610 247l12 7-10 9"/>
+  <rect class="pill-agent" x="644" y="231" width="456" height="52" rx="26"/>
+  <circle class="line-agent" cx="676" cy="254" r="8"/><path class="line-agent" d="M682 260l7 7"/>
+  <text x="702" y="263" font-size="18"><tspan font-weight="700">Deletion request</tspan><tspan class="agent-t"> — audit it</tspan></text>
+
+  <!-- row 2 -->
+  <circle class="person" cx="82" cy="329" r="21"/>
+  <text x="82" y="335" text-anchor="middle" class="agent-t" font-size="17" font-weight="700">J</text>
+  <path class="paper" d="M134 300H546a14 14 0 0 1 14 14V344a14 14 0 0 1-14 14H134a14 14 0 0 1-14-14V338l-12-9 12-7V314a14 14 0 0 1 14-14z"/>
+  <text x="140" y="335" font-size="18">“Bitte löschen Sie mein Konto.”</text>
+  <path class="scribble" d="M578 330c14-10 26 6 42-4"/><path class="scribble" d="M610 319l12 7-10 9"/>
+  <rect class="pill-agent" x="644" y="303" width="456" height="52" rx="26"/>
+  <circle class="line-agent" cx="676" cy="326" r="8"/><path class="line-agent" d="M682 332l7 7"/>
+  <text x="702" y="335" font-size="18"><tspan font-weight="700">Deletion, in German</tspan><tspan class="agent-t"> — audit it</tspan></text>
+
+  <!-- row 3 -->
+  <circle class="person" cx="82" cy="401" r="21"/>
+  <text x="82" y="407" text-anchor="middle" class="agent-t" font-size="17" font-weight="700">K</text>
+  <path class="paper" d="M134 372H546a14 14 0 0 1 14 14V416a14 14 0 0 1-14 14H134a14 14 0 0 1-14-14V410l-12-9 12-7V386a14 14 0 0 1 14-14z"/>
+  <text x="140" y="407" font-size="18">“Can you send me a copy of my data?”</text>
+  <path class="scribble" d="M578 402c14-10 26 6 42-4"/><path class="scribble" d="M610 391l12 7-10 9"/>
+  <rect class="paper-claim" x="644" y="375" width="456" height="52" rx="26"/>
+  <use href="#no" x="664" y="389" width="24" height="24"/>
+  <text x="702" y="407" font-size="18"><tspan font-weight="700">Wants a copy</tspan><tspan class="muted"> — not a deletion</tspan></text>
+
+  <!-- row 4 -->
+  <circle class="person" cx="82" cy="473" r="21"/>
+  <text x="82" y="479" text-anchor="middle" class="agent-t" font-size="17" font-weight="700">S</text>
+  <path class="paper" d="M134 444H546a14 14 0 0 1 14 14V488a14 14 0 0 1-14 14H134a14 14 0 0 1-14-14V482l-12-9 12-7V458a14 14 0 0 1 14-14z"/>
+  <text x="140" y="479" font-size="18">“Stop sending me marketing emails.”</text>
+  <path class="scribble" d="M578 474c14-10 26 6 42-4"/><path class="scribble" d="M610 463l12 7-10 9"/>
+  <rect class="paper-claim" x="644" y="447" width="456" height="52" rx="26"/>
+  <use href="#no" x="664" y="461" width="24" height="24"/>
+  <text x="702" y="479" font-size="18"><tspan font-weight="700">Marketing opt-out</tspan><tspan class="muted"> — not a deletion</tspan></text>
+
+  <!-- takeaway -->
+  <text x="600" y="580" text-anchor="middle" class="hand" font-size="30">Not a deletion? It’s marked “not applicable” and nothing else runs.</text>
+</svg>

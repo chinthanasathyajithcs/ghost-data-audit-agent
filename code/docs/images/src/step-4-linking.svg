@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+  <title id="t">Step 4: which records are theirs?</title>
+  <desc id="d">Five records. A support ticket matches the old email, an analytics row matches the email hash and an order record matches the stable user ID, so all three go into the case file. A chat transcript that only shares the same name, and a newsletter entry with a similar but not identical email, are rejected. No exact match, no link: a wrong link would delete someone else's data.</desc>
+  <style>
+    /*FONTS*/
+    /*STYLE*/
+    .folder { fill: var(--agent-soft); stroke: var(--agent); stroke-width: 2.5; stroke-linejoin: round; }
+  </style>
+  <defs>
+    <!--DEFS-->
+  </defs>
+
+  <rect class="bg" width="1200" height="630" rx="24"/>
+
+  <!-- Header -->
+  <text x="60" y="62" class="hand agent-t" font-size="30">Step 4</text>
+  <text x="60" y="110" class="h" font-size="42">Which records are theirs?</text>
+  <text x="62" y="148" class="muted" font-size="20">A record joins the case only when an exact identifier matches.</text>
+
+  <!-- records -->
+  <g>
+    <rect class="paper" x="60" y="200" width="340" height="54" rx="10"/>
+    <text x="80" y="222" font-size="17" font-weight="700">Support ticket</text>
+    <text x="80" y="243" class="muted" font-size="15">old@mail.example</text>
+
+    <rect class="paper-claim" x="60" y="270" width="340" height="54" rx="10"/>
+    <text x="80" y="292" class="muted" font-size="17" font-weight="700">Chat transcript</text>
+    <text x="80" y="313" class="muted" font-size="15">“Jane Doe”</text>
+
+    <rect class="paper" x="60" y="340" width="340" height="54" rx="10"/>
+    <text x="80" y="362" font-size="17" font-weight="700">Analytics row</text>
+    <text x="80" y="383" class="muted" font-size="15">email hash a3f9…</text>
+
+    <rect class="paper-claim" x="60" y="410" width="340" height="54" rx="10"/>
+    <text x="80" y="432" class="muted" font-size="17" font-weight="700">Newsletter list</text>
+    <text x="80" y="453" class="muted" font-size="15">jane.d@mail.example</text>
+
+    <rect class="paper" x="60" y="480" width="340" height="54" rx="10"/>
+    <text x="80" y="502" font-size="17" font-weight="700">Order record</text>
+    <text x="80" y="523" class="muted" font-size="15">user_4471</text>
+  </g>
+
+  <!-- matches: into the case file -->
+  <path class="scribble-agent" d="M412 227H780C830 227 816 335 852 335"/>
+  <path class="scribble-agent" d="M412 367H780C820 367 820 395 852 395"/>
+  <path class="scribble-agent" d="M412 507H780C830 507 816 455 852 455"/>
+  <path class="scribble-agent" d="M842 326l12 9-11 10M842 386l12 9-11 10M842 446l12 9-11 10"/>
+  <text x="470" y="217" class="hand agent-t" font-size="24">old email ✓</text>
+  <text x="470" y="357" class="hand agent-t" font-size="24">email hash ✓</text>
+  <text x="470" y="497" class="hand agent-t" font-size="24">stable ID ✓</text>
+
+  <!-- rejected -->
+  <path class="scribble dashed" d="M412 297H552"/>
+  <use href="#no" x="558" y="285" width="24" height="24"/>
+  <text x="594" y="305" class="hand muted" font-size="24">same name only</text>
+  <path class="scribble dashed" d="M412 437H552"/>
+  <use href="#no" x="558" y="425" width="24" height="24"/>
+  <text x="594" y="445" class="hand muted" font-size="24">close, not exact</text>
+
+  <!-- case file -->
+  <path class="folder" d="M860 242a10 10 0 0 1 10-10h86l14 16h160a10 10 0 0 1 10 10v252a10 10 0 0 1-10 10H870a10 10 0 0 1-10-10z"/>
+  <text x="884" y="290" class="h agent-t" font-size="24">Case file</text>
+  <g>
+    <rect class="paper" x="880" y="312" width="240" height="46" rx="8"/>
+    <use href="#ok" x="894" y="324" width="22" height="22"/>
+    <text x="928" y="341" font-size="16" font-weight="700">Support ticket</text>
+    <rect class="paper" x="880" y="372" width="240" height="46" rx="8"/>
+    <use href="#ok" x="894" y="384" width="22" height="22"/>
+    <text x="928" y="401" font-size="16" font-weight="700">Analytics row</text>
+    <rect class="paper" x="880" y="432" width="240" height="46" rx="8"/>
+    <use href="#ok" x="894" y="444" width="22" height="22"/>
+    <text x="928" y="461" font-size="16" font-weight="700">Order record</text>
+  </g>
+
+  <!-- takeaway -->
+  <text x="600" y="590" text-anchor="middle" class="hand" font-size="30">No exact match, no link. A wrong link would delete someone else’s data.</text>
+</svg>
